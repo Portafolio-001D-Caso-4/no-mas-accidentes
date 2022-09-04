@@ -42,7 +42,14 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self):
-        return reverse("users:detail", kwargs={"username": self.request.user.username})
+        nombre_grupo = self.request.user.groups.first().name
+        pagina_por_grupo = {
+            "cliente": "clientes:home",
+            "profesional": "profesionales:home",
+            "administrador": "administracion:home",
+        }
+        pagina = pagina_por_grupo[nombre_grupo]
+        return reverse(pagina, kwargs={})
 
 
 user_redirect_view = UserRedirectView.as_view()
