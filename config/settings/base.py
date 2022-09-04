@@ -80,6 +80,9 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "no_mas_accidentes.users",
+    "no_mas_accidentes.clientes",
+    "no_mas_accidentes.profesionales",
+    "no_mas_accidentes.administracion",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
