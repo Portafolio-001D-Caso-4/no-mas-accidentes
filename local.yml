@@ -36,6 +36,8 @@ services:
       - no_mas_accidentes_local_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.local/.postgres
+    ports:
+      - "5432:5432"
 
   docs:
     image: no_mas_accidentes_local_docs
@@ -63,6 +65,8 @@ services:
   redis:
     image: redis:6
     container_name: no_mas_accidentes_local_redis
+    ports:
+      - "6379:6379"
 
   celeryworker:
     <<: *django
