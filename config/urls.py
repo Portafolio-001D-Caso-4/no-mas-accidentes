@@ -18,6 +18,15 @@ urlpatterns = [
     path("users/", include("no_mas_accidentes.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path(
+        "administracion/",
+        include("no_mas_accidentes.administracion.urls", namespace="administracion"),
+    ),
+    path(
+        "profesionales/",
+        include("no_mas_accidentes.profesionales.urls", namespace="profesionales"),
+    ),
+    path("clientes/", include("no_mas_accidentes.clientes.urls", namespace="clientes")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
