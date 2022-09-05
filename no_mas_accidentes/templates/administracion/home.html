@@ -1,9 +1,240 @@
-{% extends "base.html" %}
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block contents %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0 me-3">
+                                    <img src="{% static 'images/users/avatar-2.jpg'%}" alt="" class="avatar-md rounded-circle img-thumbnail">
+                                </div>
+                                <div class="flex-grow-1 align-self-center">
+                                    <div class="text-muted">
+                                        <p class="mb-2">Bienvenido a No más accidentes</p>
+                                        <h5 class="mb-1">{{user.name}}</h5>
+                                        <p class="mb-0">{{user.groups.first.name}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-{% block title %}Home / administracion{% endblock %}
+                        <div class="col-lg-8 align-self-center">
+                            <div class="text-lg-center mt-4 mt-lg-0">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div>
+                                            <p class="text-muted text-truncate mb-2">Número de clientes</p>
+                                            <h5 class="mb-0">48</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div>
+                                            <p class="text-muted text-truncate mb-2">Número de empresas</p>
+                                            <h5 class="mb-0">40</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div>
+                                            <p class="text-muted text-truncate mb-2">Número de profesionales</p>
+                                            <h5 class="mb-0">18</h5>
 
-{% block content %}
-<h1>HOME: ADMINISTRACION</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-<p>TEXTO DE EJEMPLO HOME ADMINISTRACION</p>
-{% endblock content %}
+                    </div>
+                    <!-- end row -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar-xs me-3">
+                                    <span class="avatar-title rounded-circle bg-primary bg-soft text-primary font-size-18">
+                                        <i class="bx bx-car"></i>
+                                    </span>
+                                </div>
+                                <h5 class="font-size-14 mb-0">Visitas</h5>
+                            </div>
+                            <div class="text-muted mt-4">
+                                <h4>14 <i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+                                <div class="d-flex">
+                                    <span class="badge badge-soft-success font-size-12"> + 10 </span> <span class="ms-2 text-truncate">que el mes anterior</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar-xs me-3">
+                                    <span class="avatar-title rounded-circle bg-primary bg-soft text-primary font-size-18">
+                                        <i class="bx bxs-graduation"></i>
+                                    </span>
+                                </div>
+                                <h5 class="font-size-14 mb-0">Capacitaciones</h5>
+                            </div>
+                            <div class="text-muted mt-4">
+                                <h4> 28 <i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+                                <div class="d-flex">
+                                    <span class="badge badge-soft-success font-size-12"> + 12 </span> <span class="ms-2 text-truncate">que el mes anterior</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar-xs me-3">
+                                    <span class="avatar-title rounded-circle bg-primary bg-soft text-primary font-size-18">
+                                        <i class="bx bxs-edit"></i>
+                                    </span>
+                                </div>
+                                <h5 class="font-size-14 mb-0">Asesorías</h5>
+                            </div>
+                            <div class="text-muted mt-4">
+                                <h4> 16 <i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+
+                                <div class="d-flex">
+                                    <span class="badge badge-soft-warning font-size-12"> + 0 </span> <span class="ms-2 text-truncate">que el mes anterior</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar-xs me-3">
+                                    <span class="avatar-title rounded-circle bg-primary bg-soft text-primary font-size-18">
+                                        <i class="bx bx-phone-call"></i>
+                                    </span>
+                                </div>
+                                <h5 class="font-size-14 mb-0">Llamadas</h5>
+                            </div>
+                            <div class="text-muted mt-4">
+                                <h4> 16 <i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+
+                                <div class="d-flex">
+                                    <span class="badge badge-soft-warning font-size-12"> + 0 </span> <span class="ms-2 text-truncate">que el mes anterior</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card">
+                <div class="card-body">
+
+
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="text-muted">
+                                <div class="mb-4">
+                                    <p>Este mes</p>
+                                    <h4>$2.450.000</h4>
+                                    <div><span class="badge badge-soft-success font-size-12 me-1"> + 0.2% </span> que el mes anterior</div>
+                                </div>
+
+                                <div>
+                                    <a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light btn-sm">Ver detalles <i class="mdi mdi-chevron-right ms-1"></i></a>
+                                </div>
+
+                                <div class="mt-4">
+                                    <p class="mb-2">Mes pasado</p>
+                                    <h5>$2.281.040</h5>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-8">
+                            <div id="line-chart" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Ganancias por producto</h4>
+
+                    <div>
+                        <div id="donut-chart" class="apex-charts"></div>
+                    </div>
+
+                    <div class="text-center text-muted">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="mt-4">
+                                    <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-primary me-1"></i> Product A</p>
+                                    <h5>$ 2,132</h5>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="mt-4">
+                                    <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-success me-1"></i> Product B</p>
+                                    <h5>$ 1,763</h5>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="mt-4">
+                                    <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-danger me-1"></i> Product C</p>
+                                    <h5>$ 973</h5>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="mt-4">
+                                    <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-danger me-1"></i> Product C</p>
+                                    <h5>$ 973</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+
+    </div>
+    <!-- end row -->
+{% endblock %}
+
+{% block extra_javascript %}
+        <!-- apexcharts -->
+        <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js'%}"></script>
+
+        <!-- Saas dashboard init -->
+        <script src="{% static 'js/pages/saas-dashboard.init.js'%}"></script>
+{% endblock %}
