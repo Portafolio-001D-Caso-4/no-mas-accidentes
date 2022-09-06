@@ -50,7 +50,7 @@ class CrearClienteView(EsAdministradorMixin, SuccessMessageMixin, CreateView):
 class DetalleClienteInformacionView(
     EsAdministradorMixin, SuccessMessageMixin, UpdateView
 ):
-    template_name = f"{app_name}/detalle_cliente_informacion.html"
+    template_name = f"{app_name}/detalle_cliente/informacion.html"
     form_class = ActualizarDetalleClienteForm
     queryset = User.objects.filter(groups__name="cliente").all()
 
