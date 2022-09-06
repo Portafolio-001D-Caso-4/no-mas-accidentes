@@ -27,7 +27,7 @@
                 <div class="text-sm-end">
                     <a type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" href="{% url 'administracion:mantenedor_clientes_crear' %}"><i class="mdi mdi-plus me-1"></i>Crear nuevo cliente</a>
                 </div>
-            </div><!-- end col-->
+            </div>
         </div>
         <div class="card">
             <div class="card-body">
@@ -74,7 +74,7 @@
                                 <td>
                                     <ul class="list-inline font-size-20 contact-links mb-0">
                                         <li class="list-inline-item px-2">
-                                            <a href="javascript: void(0);" title="Profile"><i class="bx bx-user-circle"></i></a>
+                                            <a href="{% url 'administracion:mantenedor_clientes_detalle_informacion' pk=cliente.pk %}" title="Detalles"><i class="bx bx-user-circle"></i></a>
                                         </li>
                                     </ul>
                                 </td>
