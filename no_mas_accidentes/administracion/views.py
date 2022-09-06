@@ -1,9 +1,12 @@
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, TemplateView
+from django.views.generic import CreateView, ListView, TemplateView, UpdateView
 
 from no_mas_accidentes.administracion.constants import app_name
-from no_mas_accidentes.administracion.forms import CrearClienteForm
+from no_mas_accidentes.administracion.forms import (
+    ActualizarDetalleClienteForm,
+    CrearClienteForm,
+)
 from no_mas_accidentes.administracion.mixins import EsAdministradorMixin
 from no_mas_accidentes.users.models import User
 
@@ -44,6 +47,13 @@ class CrearClienteView(EsAdministradorMixin, SuccessMessageMixin, CreateView):
         )
 
 
+class DetalleClienteInformacionView(EsAdministradorMixin, UpdateView):
+    template_name = f"{app_name}/detalle_cliente_informacion.html"
+    form_class = ActualizarDetalleClienteForm
+    queryset = User.objects.filter(groups__name="cliente").all()
+
+
 home_view = HomeView.as_view()
 lista_clientes_view = ListaClientesView.as_view()
 crear_cliente_view = CrearClienteView.as_view()
+detalle_cliente_informacion_view = DetalleClienteInformacionView.as_view()
