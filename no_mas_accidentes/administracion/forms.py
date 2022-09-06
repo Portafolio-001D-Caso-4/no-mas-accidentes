@@ -7,7 +7,7 @@ from no_mas_accidentes.users.models import User
 class CrearClienteForm(ModelForm):
     class Meta:
         model = User
-        fields = ("rut", "username", "email", "name")
+        fields = ("rut", "username", "email", "name", "empresa")
 
     def save(self, commit: bool = True):
         cliente = super().save(commit=False)
@@ -21,4 +21,4 @@ class CrearClienteForm(ModelForm):
 class ActualizarDetalleClienteForm(ModelForm):
     class Meta:
         model = User
-        fields = ("rut", "username", "email", "name", "is_active")
+        fields = ("rut", "username", "email", "name", "is_active", "empresa")
