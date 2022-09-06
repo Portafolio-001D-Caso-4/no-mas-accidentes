@@ -7,8 +7,12 @@ class Empresa(models.Model):
     rut = models.CharField(
         max_length=9, unique=True, validators=[users_validators.validar_rut]
     )
+    nombre = models.CharField(max_length=254)
     giro = models.CharField(max_length=254)
     direccion = models.TextField()
     latitud = models.FloatField(blank=True, null=True)
     longitud = models.FloatField(blank=True, null=True)
     esta_activa = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.rut} - {self.nombre}"
