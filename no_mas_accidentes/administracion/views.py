@@ -47,10 +47,21 @@ class CrearClienteView(EsAdministradorMixin, SuccessMessageMixin, CreateView):
         )
 
 
-class DetalleClienteInformacionView(EsAdministradorMixin, UpdateView):
+class DetalleClienteInformacionView(
+    EsAdministradorMixin, SuccessMessageMixin, UpdateView
+):
     template_name = f"{app_name}/detalle_cliente_informacion.html"
     form_class = ActualizarDetalleClienteForm
     queryset = User.objects.filter(groups__name="cliente").all()
+
+    def get_success_url(self) -> str:
+        return reverse_lazy(
+            f"{app_name}:mantenedor_clientes_detalle_informacion",
+            kwargs={"pk": self.object.pk},
+        )
+
+    def get_success_message(self, cleaned_data):
+        return f"Cliente {self.object.id} - {self.object.email} actualizado satisfactoriamente"
 
 
 home_view = HomeView.as_view()

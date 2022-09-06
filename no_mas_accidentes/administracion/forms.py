@@ -21,4 +21,4 @@ class CrearClienteForm(ModelForm):
 class ActualizarDetalleClienteForm(ModelForm):
     class Meta:
         model = User
-        fields = ("rut", "username", "email", "name")
+        fields = ("rut", "username", "email", "name", "is_active")
