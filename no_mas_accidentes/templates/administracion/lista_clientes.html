@@ -12,11 +12,22 @@
             </div><!-- end col-->
         </div>
         <div class="row mb-2">
-            <div class="col-sm-12">
+            <div class="col-sm-4">
+                <form method="get" action="{% url 'administracion:mantenedor_clientes_lista' %}">
+                    <div class="search-box me-2 mb-2 d-inline-block">
+                        <div class="position-relative">
+                            <input name="filtro_rut" type="text" class="form-control" value="{{filtro_rut}}" placeholder="Ingrese rut a buscar">
+                            <i class="bx bx-search-alt search-icon"></i>
+                        </div>
+                    </div>
+                    <input class="btn btn-primary waves-effect waves-light" type="submit" name="submit" value="Buscar"/>
+                </form>
+            </div>
+            <div class="col-sm-8">
                 <div class="text-sm-end">
                     <a type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" href="{% url 'administracion:mantenedor_clientes_crear' %}"><i class="mdi mdi-plus me-1"></i>Crear nuevo cliente</a>
                 </div>
-            </div><!-- end col-->
+            </div>
         </div>
         <div class="card">
             <div class="card-body">
@@ -63,7 +74,7 @@
                                 <td>
                                     <ul class="list-inline font-size-20 contact-links mb-0">
                                         <li class="list-inline-item px-2">
-                                            <a href="javascript: void(0);" title="Profile"><i class="bx bx-user-circle"></i></a>
+                                            <a href="{% url 'administracion:mantenedor_clientes_detalle_informacion' pk=cliente.pk %}" title="Detalles"><i class="bx bx-user-circle"></i></a>
                                         </li>
                                     </ul>
                                 </td>

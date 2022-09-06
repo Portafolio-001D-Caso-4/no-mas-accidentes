@@ -2,6 +2,7 @@ from django.urls import path
 
 from no_mas_accidentes.administracion.views import (
     crear_cliente_view,
+    detalle_cliente_informacion_view,
     home_view,
     lista_clientes_view,
 )
@@ -18,5 +19,10 @@ urlpatterns = [
         "mantenedor-clientes/crear",
         view=crear_cliente_view,
         name="mantenedor_clientes_crear",
+    ),
+    path(
+        "mantenedor-clientes/<int:pk>/informacion",
+        view=detalle_cliente_informacion_view,
+        name="mantenedor_clientes_detalle_informacion",
     ),
 ]
