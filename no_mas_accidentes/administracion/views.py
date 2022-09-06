@@ -20,6 +20,18 @@ class ListaClientesView(EsAdministradorMixin, ListView):
     paginate_by = 10
     template_name = f"{app_name}/lista_clientes.html"
 
+    def get_queryset(self):
+        filtro_rut = self.request.GET.get("filtro_rut")
+        queryset = self.queryset.order_by(self.ordering)
+        if filtro_rut:
+            queryset = queryset.filter(rut=str(filtro_rut).upper())
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filtro_rut"] = self.request.GET.get("filtro_rut", "")
+        return context
+
 
 class CrearClienteView(EsAdministradorMixin, SuccessMessageMixin, CreateView):
     template_name = f"{app_name}/crear_cliente.html"
