@@ -1,0 +1,98 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block contents %}
+<div class="row">
+    <div class="col-lg-12">
+      <div class="row mb-2">
+            <div class="col-sm-12">
+                  <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                      <h4 class="mb-sm-0 font-size-18">Mantenedor de clientes</h4>
+                  </div>
+            </div><!-- end col-->
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <div class="text-sm-end">
+                    <a type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" href="{% url 'administracion:mantenedor_clientes_crear' %}"><i class="mdi mdi-plus me-1"></i>Crear nuevo cliente</a>
+                </div>
+            </div><!-- end col-->
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 70px;">#</th>
+                                <th scope="col">RUT</th>
+                                <th scope="col">USUARIO</th>
+                                <th scope="col">EMAIL</th>
+                                <th scope="col">NOMBRE</th>
+                                <th scope="col">¿ESTÁ ACTIVO?</th>
+                                <th scope="col">CREADO EN</th>
+                                <th scope="col">EMPRESA</th>
+                                <th scope="col">ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for cliente in page_obj %}
+                            <tr>
+                                <td>{{ cliente.id }}</td>
+                                <td>{{ cliente.rut }}</td>
+                                <td>
+                                    <h5 class="font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">{{ cliente.username }}e</a></h5>
+                                </td>
+                                <td>{{ cliente.email }}</td>
+                                <td>
+                                   {{ cliente.name }}
+                                </td>
+                                <td>
+                                    {% if cliente.is_active %}
+                                        <p class="badge badge-soft-primary font-size-11 m-1">SI</p>
+                                    {% else %}
+                                        <p class="badge badge-soft-danger font-size-11 m-1">NO</p>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ cliente.date_joined|date:"SHORT_DATETIME_FORMAT" }}
+                                </td>
+                                <td>
+                                    EMPRESA1
+                                </td>
+                                <td>
+                                    <ul class="list-inline font-size-20 contact-links mb-0">
+                                        <li class="list-inline-item px-2">
+                                            <a href="javascript: void(0);" title="Profile"><i class="bx bx-user-circle"></i></a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="pagination justify-content-center mt-4">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a href="?page={{ page_obj.previous_page_number }}" class="page-link"><i class="mdi mdi-chevron-left"></i></a>
+                            </li>
+                            {% endif %}
+                            <li class="page-item">
+                                <a class="page-link">{{ page_obj.number }} de {{page_obj.paginator.num_pages }}</a>
+                            </li>
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a href="?page={{ page_obj.next_page_number }}" class="page-link"><i class="mdi mdi-chevron-right"></i></a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
