@@ -16,3 +16,9 @@ class CrearClienteForm(ModelForm):
         grupo = Group.objects.get(name="cliente")
         cliente.groups.add(grupo)
         return cliente
+
+
+class ActualizarDetalleClienteForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ("rut", "username", "email", "name")
