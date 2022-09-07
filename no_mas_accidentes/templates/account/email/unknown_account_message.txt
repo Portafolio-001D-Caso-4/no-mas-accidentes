@@ -1,0 +1,12 @@
+{% extends "account/email/base_message.txt" %}
+{% load i18n %}
+
+{% block content %}{% autoescape off %}{% blocktrans %}
+Estas recibiendo este mensaje porque tú o alguien más ha solicitado un restablecimiento de contraseña para este correo electrónico.
+Sin embargo, no tenemos registros de un usuario con este email {{ email }} en nuestra base de datos.
+
+Este correo electrónico puede ser ignorado si no solicitaste una nueva contraseña.
+
+{% endblocktrans %}
+
+{% endautoescape %}{% endblock %}

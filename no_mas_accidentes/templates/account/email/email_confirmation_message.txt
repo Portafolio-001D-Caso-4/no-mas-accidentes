@@ -1,0 +1,10 @@
+{% extends "account/email/base_message.txt" %}
+{% load account %}
+{% load i18n %}
+
+{% block content %}{% autoescape off %}{% user_display user as user_display %}
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}
+Estás recibiendo este correo electrónico porque el usuario {{ user_display }} ha proporcionado su dirección de correo
+electrónico para registar una cuenta en no-mas-accidentes.com.
+
+Para confirmar que estos es correcto, vaya a {{ activate_url }}{% endblocktrans %}{% endautoescape %}{% endblock %}
