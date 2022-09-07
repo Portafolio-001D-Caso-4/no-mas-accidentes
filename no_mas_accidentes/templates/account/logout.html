@@ -1,19 +1,22 @@
 {% extends "account/base.html" %}
+{% load crispy_forms_tags %}
 
-{% load i18n %}
+{% block title %}Login{% endblock title %}
+{% block innercontent %}
 
-{% block head_title %}{% translate "Sign Out" %}{% endblock %}
+<div class="my-auto">
+    <div>
+        <h5 class="text-primary">Confirmación de cierre de sesión</h5>
+        <p class="text-muted">¿Estás seguro que deseas salir?</p>
+    </div>
+    <form method="post" action="{% url 'account_logout' %}">
+    {% csrf_token %}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+        {% endif %}
+        <button class="btn btn-danger mb-2" type="submit">Cerrar sesión</button>
+    </form>
+    <a class="btn btn-primary" href="{% url 'account_login' %}"/>Regresa al Home</a>
+</div>
 
-{% block inner %}
-<h1>{% translate "Sign Out" %}</h1>
-
-<p>{% translate 'Are you sure you want to sign out?' %}</p>
-
-<form method="post" action="{% url 'account_logout' %}">
-  {% csrf_token %}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-  {% endif %}
-  <button class="btn btn-danger" type="submit">{% translate 'Sign Out' %}</button>
-</form>
-{% endblock %}
+{% endblock innercontent %}
