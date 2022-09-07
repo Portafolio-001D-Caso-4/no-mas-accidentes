@@ -1,4 +1,5 @@
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView
 
@@ -27,7 +28,10 @@ class ListaClientesView(EsAdministradorMixin, ListView):
         filtro_rut = self.request.GET.get("filtro_rut")
         queryset = self.queryset.order_by(self.ordering)
         if filtro_rut:
-            queryset = queryset.filter(rut=str(filtro_rut).upper())
+            rut_a_buscar = str(filtro_rut).upper()
+            queryset = queryset.filter(
+                Q(rut=rut_a_buscar) | Q(empresa__rut=rut_a_buscar)
+            )
         return queryset
 
     def get_context_data(self, **kwargs):
