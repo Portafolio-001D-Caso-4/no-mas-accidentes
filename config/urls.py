@@ -9,7 +9,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from no_mas_accidentes.users.views import user_redirect_view
 
 urlpatterns = [
-    path("", view=user_redirect_view),
+    path("", view=user_redirect_view, name="home_page"),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
