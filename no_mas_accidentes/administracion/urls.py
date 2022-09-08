@@ -2,9 +2,12 @@ from django.urls import path
 
 from no_mas_accidentes.administracion.views import (
     crear_cliente_view,
+    crear_profesional_view,
     detalle_cliente_informacion_view,
+    detalle_profesional_informacion_view,
     home_view,
     lista_clientes_view,
+    lista_profesionales_view,
 )
 
 app_name = "administracion"
@@ -24,5 +27,20 @@ urlpatterns = [
         "mantenedor-clientes/<int:pk>/informacion",
         view=detalle_cliente_informacion_view,
         name="mantenedor_clientes_detalle_informacion",
+    ),
+    path(
+        "mantenedor-profesionales/lista",
+        view=lista_profesionales_view,
+        name="mantenedor_profesionales_lista",
+    ),
+    path(
+        "mantenedor-profesionales/crear",
+        view=crear_profesional_view,
+        name="mantenedor_profesionales_crear",
+    ),
+    path(
+        "mantenedor-profesionales/<int:pk>/informacion",
+        view=detalle_profesional_informacion_view,
+        name="mantenedor_profesionales_detalle_informacion",
     ),
 ]
