@@ -1,7 +1,10 @@
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView
+from rest_framework.decorators import api_view
 
 from no_mas_accidentes.administracion.constants import app_name
 from no_mas_accidentes.administracion.forms import (
@@ -19,6 +22,7 @@ from no_mas_accidentes.administracion.mixins import (
 from no_mas_accidentes.clientes.models import Empresa
 from no_mas_accidentes.profesionales.models import Profesional
 from no_mas_accidentes.users.models import User
+from no_mas_accidentes.utils import pdf as pdf_utils
 
 
 class HomeView(EsAdministradorMixin, TemplateView):
@@ -211,3 +215,71 @@ class DetalleEmpresaInformacionView(
 lista_empresas_view = ListaEmpresasView.as_view()
 crear_empresa_view = CrearEmpresaView.as_view()
 detalle_empresa_informacion_view = DetalleEmpresaInformacionView.as_view()
+
+
+@api_view(["GET"])
+def descarga_contrato_base_view(request, pk):
+    # contrato = get_object_or_404(Contrato, pk=pk)
+    nombre_archivo = "contrato-1"
+    direccion_empresa = "Jose Miguel Carrera 1390"
+    dia = 1
+    mes = 2
+    anno = 2022
+    nombre_empresa = "Prevención Chile LTDA"
+    rut_empresa = "19214073-0"
+    pdf = pdf_utils.PdfBuilder(nombre_archivo=nombre_archivo)
+    pdf.agregar_texto(
+        "CONTRATO DE PRESTACIÓN DE SERVICIOS",
+        estilo=pdf_utils.PdfConstants.EstilosTexto.Titulos.DEFAULT,
+    )
+    pdf.agregar_texto(
+        f"""
+    En {direccion_empresa} a {dia} de {mes} de {anno}, entre {nombre_empresa} (razón social), RUT {rut_empresa}
+    que en adelante se denominará "<i>el mandante</i>", y (razón social), RUT {rut_empresa}, que en adelante
+    se denominará "<i>el mandatario</i>", han acordado el contrato de prestación de servicios que constan de la
+    cláusulas que a continuación se exponen:
+    """,
+        estilo=pdf_utils.PdfConstants.EstilosTexto.Cuerpos.JUSTIFICADO,
+    )
+    pdf.agregar_linea_en_blanco()
+    pdf.agregar_texto(
+        """
+        <b>PRIMERO</b>: En virtud del presente contrato, el mandatorio se compromete a ejecutar el siguiente encargo:
+        ASESORÍA Y SERVICIOS PREVENCIÓN DE RIESGOS.
+        """,
+        estilo=pdf_utils.PdfConstants.EstilosTexto.Cuerpos.JUSTIFICADO,
+    )
+    pdf.agregar_linea_en_blanco()
+    pdf.agregar_linea_en_blanco()
+    pdf.agregar_texto(
+        """
+            ________________________
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            ________________________
+        """,
+        estilo=pdf_utils.PdfConstants.EstilosTexto.Cuerpos.CENTRADO,
+    )
+    pdf.agregar_texto(
+        """
+            FIRMA EMPRESA
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            FIRMA CLIENTE
+        """,
+        estilo=pdf_utils.PdfConstants.EstilosTexto.Cuerpos.CENTRADO,
+    )
+    pdf.agregar_texto(
+        """
+            RUT
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            RUT
+        """,
+        estilo=pdf_utils.PdfConstants.EstilosTexto.Cuerpos.CENTRADO,
+    )
+    pdf.generar_pdf()
+
+    directorio_a_guardar = FileSystemStorage("/tmp")
+    with directorio_a_guardar.open(f"{nombre_archivo}.pdf") as pdf:
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}.pdf"'
+        return response
