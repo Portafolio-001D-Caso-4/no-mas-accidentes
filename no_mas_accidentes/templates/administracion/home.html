@@ -9,7 +9,7 @@
                         <div class="col-lg-4">
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
-                                    <img src="{% static 'images/users/avatar-2.jpg'%}" alt="" class="avatar-md rounded-circle img-thumbnail">
+                                    <img src="{% static 'images/users/avatar-defecto.png'%}" alt="" class="avatar-md rounded-circle img-thumbnail">
                                 </div>
                                 <div class="flex-grow-1 align-self-center">
                                     <div class="text-muted">
@@ -27,19 +27,19 @@
                                     <div class="col-4">
                                         <div>
                                             <p class="text-muted text-truncate mb-2">Número de clientes</p>
-                                            <h5 class="mb-0">48</h5>
+                                            <h5 class="mb-0">{{ num_clientes }}</h5>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div>
                                             <p class="text-muted text-truncate mb-2">Número de empresas</p>
-                                            <h5 class="mb-0">40</h5>
+                                            <h5 class="mb-0">{{ num_empresas }}</h5>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div>
                                             <p class="text-muted text-truncate mb-2">Número de profesionales</p>
-                                            <h5 class="mb-0">18</h5>
+                                            <h5 class="mb-0">{{ num_profesionales }}</h5>
 
                                         </div>
                                     </div>
