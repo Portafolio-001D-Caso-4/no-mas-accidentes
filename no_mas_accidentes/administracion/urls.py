@@ -4,6 +4,7 @@ from no_mas_accidentes.administracion.views import (
     crear_cliente_view,
     crear_empresa_view,
     crear_profesional_view,
+    descarga_contrato_base_view,
     detalle_cliente_informacion_view,
     detalle_empresa_informacion_view,
     detalle_profesional_informacion_view,
@@ -60,5 +61,10 @@ urlpatterns = [
         "mantenedor-empresas/<int:pk>/informacion",
         view=detalle_empresa_informacion_view,
         name="mantenedor_empresas_detalle_informacion",
+    ),
+    path(
+        "contratos/<int:pk>/descarga_base",
+        view=descarga_contrato_base_view,
+        name="descarga_contrato_base_pdf",
     ),
 ]
