@@ -2,11 +2,14 @@ from django.urls import path
 
 from no_mas_accidentes.administracion.views import (
     crear_cliente_view,
+    crear_empresa_view,
     crear_profesional_view,
     detalle_cliente_informacion_view,
+    detalle_empresa_informacion_view,
     detalle_profesional_informacion_view,
     home_view,
     lista_clientes_view,
+    lista_empresas_view,
     lista_profesionales_view,
 )
 
@@ -42,5 +45,20 @@ urlpatterns = [
         "mantenedor-profesionales/<int:pk>/informacion",
         view=detalle_profesional_informacion_view,
         name="mantenedor_profesionales_detalle_informacion",
+    ),
+    path(
+        "mantenedor-empresas/lista",
+        view=lista_empresas_view,
+        name="mantenedor_empresas_lista",
+    ),
+    path(
+        "mantenedor-empresas/crear",
+        view=crear_empresa_view,
+        name="mantenedor_empresas_crear",
+    ),
+    path(
+        "mantenedor-empresas/<int:pk>/informacion",
+        view=detalle_empresa_informacion_view,
+        name="mantenedor_empresas_detalle_informacion",
     ),
 ]
