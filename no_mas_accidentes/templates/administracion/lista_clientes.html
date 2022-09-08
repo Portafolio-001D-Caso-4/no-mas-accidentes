@@ -81,6 +81,11 @@
                                         <li class="list-inline-item px-2">
                                             <a href="{% url 'administracion:mantenedor_clientes_detalle_informacion' pk=cliente.pk %}" title="Detalles"><i class="bx bx-user-circle"></i></a>
                                         </li>
+                                        {% if cliente.empresa %}
+                                        <li class="list-inline-item px-2">
+                                            <a href="{% url 'administracion:mantenedor_empresas_detalle_informacion' pk=cliente.empresa_id %}" title="Ver empresa"><i class="bx bxs-business"></i></a>
+                                        </li>
+                                        {% endif %}
                                     </ul>
                                 </td>
                             </tr>
