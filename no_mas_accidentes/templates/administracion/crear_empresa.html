@@ -1,0 +1,45 @@
+{% extends 'administracion/base.html' %}
+
+{% load static %}
+
+{% block contents %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-3">
+                    <h4 class="card-title">Crear nueva empresa</h4>
+                    <div class="col-lg-12 mt-5">
+                        <form action="" method="post">
+                            {% csrf_token %}
+
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                            {% for field in form %}
+                                <div class="mb-3">
+                                    <label>{{ field.label_tag }}</label>
+                                    <div>{{ field }}</div>
+                                    {% if field.errors %}
+                                      <ul class="parsley-errors-list filled" id="parsley-id-25" aria-hidden="false">
+                                      {% for error in field.errors %}
+                                          <li class="parsley-required">{{ error }}</li>
+                                      {% endfor %}
+                                      </ul>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                            <div class="d-flex flex-wrap gap-4 justify-content-center">
+                                <input type="submit" class="btn btn-primary waves-effect waves-light" value="Crear nuevo">
+                                <input type="submit" class="btn btn-danger waves-effect waves-light" onclick="window.location='{% url 'administracion:mantenedor_empresas_lista' %}'; return false;" value="Cancelar">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
