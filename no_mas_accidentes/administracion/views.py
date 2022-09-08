@@ -17,11 +17,19 @@ from no_mas_accidentes.administracion.mixins import (
     PassRequestToFormViewMixin,
 )
 from no_mas_accidentes.clientes.models import Empresa
+from no_mas_accidentes.profesionales.models import Profesional
 from no_mas_accidentes.users.models import User
 
 
 class HomeView(EsAdministradorMixin, TemplateView):
     template_name = f"{app_name}/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["num_clientes"] = User.objects.filter(groups__name="cliente").count()
+        context["num_empresas"] = Empresa.objects.all().count()
+        context["num_profesionales"] = Profesional.objects.all().count()
+        return context
 
 
 home_view = HomeView.as_view()
