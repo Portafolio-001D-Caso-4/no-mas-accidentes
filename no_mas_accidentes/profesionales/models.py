@@ -17,6 +17,11 @@ class Profesional(models.Model):
         return f"{self.usuario.rut} - {self.usuario.name}"
 
 
+# class HorarioProfesional(models.Model):
+#     fecha_inicio = models.DateField()
+#     fecha_termino = models.DateField()
+
+
 class Servicio(models.Model):
     TIPOS = [
         ("ASESORIA EMERGENCIA", "ASESORIA EMERGENCIA"),
@@ -41,3 +46,4 @@ class Servicio(models.Model):
     motivo = models.TextField(null=True, blank=True)
     contenido = models.TextField(null=True, blank=True)
     materiales = models.TextField(null=True, blank=True)
+    duracion = models.TimeField(null=True, blank=True)
