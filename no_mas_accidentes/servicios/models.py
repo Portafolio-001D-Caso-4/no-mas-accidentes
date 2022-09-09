@@ -42,3 +42,16 @@ class OportunidadDeMejora(models.Model):
         Profesional, null=True, blank=True, on_delete=models.SET_NULL
     )
     servicio = models.ForeignKey(Servicio, null=True, on_delete=models.SET_NULL)
+
+
+class Evento(models.Model):
+    TIPOS = [
+        ("ACCIDENTE", "ACCIDENTE"),
+        ("MULTA", "MULTA"),
+    ]
+    tipo = models.CharField(choices=TIPOS, max_length=256)
+    fecha = models.DateTimeField()
+    contenido = models.TextField()
+
+    creado_en = models.DateTimeField(auto_now_add=True)
+    servicio = models.ForeignKey(Servicio, null=True, on_delete=models.SET_NULL)
