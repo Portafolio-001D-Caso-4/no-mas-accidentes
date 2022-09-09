@@ -1,8 +1,10 @@
+from typing import Any
+
 from django.templatetags.static import static
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.styles import ParagraphStyle, StyleSheet1, getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import Paragraph, SimpleDocTemplate
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Table
 from reportlab.platypus.flowables import Image, PageBreakIfNotEmpty, Spacer
 from reportlab.rl_config import canvas_basefontname as _baseFontName
 
@@ -81,8 +83,15 @@ class PdfBuilder:
         )
         self.elementos.append(imagen)
 
+    def agregar_tabla(self, datos_matriz: list[list[Any]]):
+        tabla = Table(
+            datos_matriz, style=[("FONTNAME", (0, 0), (-1, 0), "Courier-Bold")]
+        )
+
+        self.elementos.append(tabla)
+
     def agregar_linea_en_blanco(self):
-        linea_en_blanco = Spacer(width=1 * inch, height=0.5 * inch)
+        linea_en_blanco = Spacer(width=1 * inch, height=0.25 * inch)
         self.elementos.append(linea_en_blanco)
 
     def agregar_salto_de_pagina(self):

@@ -13,25 +13,25 @@
             <div class="card-body">
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_item_informacion %}{% endblock %}" data-bs-toggle="tab" href="{% url 'administracion:mantenedor_empresas_detalle_informacion' pk=object.pk %}" role="tab">
+                        <a class="nav-link {% block nav_item_informacion %}{% endblock %}"  href="{% url 'administracion:mantenedor_empresas_detalle_informacion' pk=empresa.pk %}" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-address-card"></i></span>
                             <span class="d-none d-sm-block">Información</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_item_contratos %}{% endblock %}" data-bs-toggle="tab" href="#profile" role="tab">
+                        <a class="nav-link {% block nav_item_contratos %}{% endblock %}"  href="{% url 'administracion:mantenedor_empresas_detalle_contratos' pk=empresa.pk %}" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-file-contract"></i></span>
                             <span class="d-none d-sm-block">Contratos</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_item_pagos %}{% endblock %}" data-bs-toggle="tab" href="#messages" role="tab">
+                        <a class="nav-link {% block nav_item_pagos %}{% endblock %}"  href="#messages" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-money-check"></i></span>
                             <span class="d-none d-sm-block">Pagos</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_item_actividades %}{% endblock %}" data-bs-toggle="tab" href="#settings" role="tab">
+                        <a class="nav-link {% block nav_item_actividades %}{% endblock %}" href="#settings" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-chalkboard-teacher"></i></span>
                             <span class="d-none d-sm-block">Actividades</span>
                         </a>

@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.forms import IntegerField, ModelForm
 
-from no_mas_accidentes.clientes.models import Empresa
+from no_mas_accidentes.clientes.models import Contrato, Empresa
 from no_mas_accidentes.profesionales.models import Profesional
 from no_mas_accidentes.users.models import User
 
@@ -124,6 +124,13 @@ class CrearEmpresaForm(ModelForm):
     def clean_rut(self):
         rut = str(self.cleaned_data["rut"]).upper()
         return rut
+
+    def save(self, commit: bool = True):
+        empresa = super().save(commit=False)
+        if commit:
+            empresa.save()
+        Contrato.objects.create(empresa=empresa)
+        return empresa
 
 
 class ActualizarDetalleEmpresaForm(ModelForm):
