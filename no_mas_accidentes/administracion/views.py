@@ -216,10 +216,36 @@ class DetalleEmpresaInformacionView(
     def get_success_message(self, cleaned_data):
         return f"Empresa {self.object.id} - {self.object.nombre} actualizada satisfactoriamente"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["empresa"] = self.object
+        return context
+
+
+class DetalleEmpresaContratosView(EsAdministradorMixin, ListView):
+    queryset = Contrato.objects.all()
+    fields = "__all__"
+    success_url = reverse_lazy(f"{app_name}:mantenedor_empresas_detalle_contratos")
+    ordering = "id"
+    paginate_by = 10
+    template_name = f"{app_name}/detalle_empresa/contratos.html"
+
+    def get_queryset(self):
+        queryset = self.queryset.order_by(self.ordering)
+        # filtrar por PK de empresa
+        queryset = queryset.filter(empresa_id=self.kwargs["pk"])
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["empresa"] = Empresa.objects.get(pk=self.kwargs["pk"])
+        return context
+
 
 lista_empresas_view = ListaEmpresasView.as_view()
 crear_empresa_view = CrearEmpresaView.as_view()
 detalle_empresa_informacion_view = DetalleEmpresaInformacionView.as_view()
+detalle_empresa_contratos_view = DetalleEmpresaContratosView.as_view()
 
 
 @login_required
