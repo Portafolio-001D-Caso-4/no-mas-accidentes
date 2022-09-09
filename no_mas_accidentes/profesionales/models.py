@@ -20,6 +20,8 @@ class Profesional(models.Model):
 # class HorarioProfesional(models.Model):
 #     fecha_inicio = models.DateField()
 #     fecha_termino = models.DateField()
+#     desde = models.TimeField()
+#     hasta = models.TimeField()
 
 
 class Servicio(models.Model):
@@ -46,4 +48,4 @@ class Servicio(models.Model):
     motivo = models.TextField(null=True, blank=True)
     contenido = models.TextField(null=True, blank=True)
     materiales = models.TextField(null=True, blank=True)
-    duracion = models.TimeField(null=True, blank=True)
+    duracion = models.DurationField(null=True, blank=True)
