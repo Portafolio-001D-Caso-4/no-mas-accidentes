@@ -30,3 +30,15 @@ class Servicio(models.Model):
     contenido = models.TextField(null=True, blank=True)
     materiales = models.TextField(null=True, blank=True)
     duracion = models.DurationField(null=True, blank=True)
+
+
+class OportunidadDeMejora(models.Model):
+    creado_en = models.DateTimeField(auto_now_add=True)
+    contenido = models.TextField()
+
+    realizado = models.BooleanField(null=True, default=None)
+    revisado_en = models.DateTimeField(null=True, blank=True)
+    revisado_por = models.ForeignKey(
+        Profesional, null=True, blank=True, on_delete=models.SET_NULL
+    )
+    servicio = models.ForeignKey(Servicio, null=True, on_delete=models.SET_NULL)
