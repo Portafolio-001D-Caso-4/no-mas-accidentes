@@ -1,7 +1,7 @@
 from allauth.account.utils import send_email_confirmation
 from django.contrib.auth.models import Group
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.forms import IntegerField, ModelForm
+from django.forms import IntegerField, ModelForm, widgets
 
 from no_mas_accidentes.clientes.models import Contrato, Empresa
 from no_mas_accidentes.profesionales.models import Profesional
@@ -11,11 +11,13 @@ from no_mas_accidentes.users.models import User
 class CrearClienteForm(ModelForm):
     class Meta:
         model = User
-        fields = ("rut", "username", "email", "name", "empresa")
+        fields = ("rut", "username", "name", "email", "empresa")
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
+        self.fields["rut"].help_text = "Sin guión ni puntos"
+        self.fields["name"].help_text = "Nombre completo del cliente"
 
     def clean_rut(self):
         rut = str(self.cleaned_data["rut"]).upper()
@@ -43,16 +45,20 @@ class ActualizarDetalleClienteForm(ModelForm):
 
 class CrearProfesionalForm(ModelForm):
     telefono = IntegerField(
+        label="Teléfono",
+        widget=widgets.TextInput(attrs={"maxlength": 9}),
         validators=[MinValueValidator(900000000), MaxValueValidator(999999999)],
     )
 
     class Meta:
         model = User
-        fields = ("rut", "username", "email", "name")
+        fields = ("rut", "username", "name", "email")
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
+        self.fields["rut"].help_text = "Sin guión ni puntos"
+        self.fields["name"].help_text = "Nombre completo del profesional"
 
     def clean_rut(self):
         rut = str(self.cleaned_data["rut"]).upper()
@@ -109,8 +115,8 @@ class CrearEmpresaForm(ModelForm):
     class Meta:
         model = Empresa
         fields = (
-            "rut",
             "nombre",
+            "rut",
             "giro",
             "direccion",
             "telefono",
@@ -120,6 +126,12 @@ class CrearEmpresaForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
+        self.fields["rut"].help_text = "Sin guión ni puntos"
+        self.fields["direccion"].widget = widgets.TextInput()
+        self.fields["telefono"].widget = widgets.TextInput(attrs={"maxlength": 9})
+        for field in self.fields:
+            if not self.fields[field].help_text:
+                self.fields[field].help_text = ""
 
     def clean_rut(self):
         rut = str(self.cleaned_data["rut"]).upper()
@@ -137,8 +149,8 @@ class ActualizarDetalleEmpresaForm(ModelForm):
     class Meta:
         model = Empresa
         fields = (
-            "rut",
             "nombre",
+            "rut",
             "giro",
             "direccion",
             "telefono",
@@ -149,3 +161,11 @@ class ActualizarDetalleEmpresaForm(ModelForm):
     def clean_rut(self):
         rut = str(self.cleaned_data["rut"]).upper()
         return rut
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["rut"].help_text = "Sin guión ni puntos"
+        self.fields["telefono"].label = "Teléfono"
+        self.fields["telefono"].widget = widgets.TextInput(attrs={"maxlength": 9})
+        self.fields["direccion"].label = "Dirección"
+        self.fields["direccion"].widget = widgets.TextInput()
