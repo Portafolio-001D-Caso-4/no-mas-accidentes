@@ -36,7 +36,10 @@ class CrearClienteForm(ModelForm):
 class ActualizarDetalleClienteForm(ModelForm):
     class Meta:
         model = User
-        fields = ("rut", "username", "email", "name", "is_active", "empresa")
+        fields = ("rut", "username", "email", "name", "empresa", "is_active")
+
+    def __init__(self, *args, **kwargs):
+        self.fields["name"].help_text = "Nombre completo del cliente"
 
     def clean_rut(self):
         rut = str(self.cleaned_data["rut"]).upper()
@@ -80,6 +83,8 @@ class CrearProfesionalForm(ModelForm):
 
 class ActualizarDetalleProfesionalForm(ModelForm):
     telefono = IntegerField(
+        label="Teléfono",
+        widget=widgets.TextInput(attrs={"maxlength": 9}),
         validators=[MinValueValidator(900000000), MaxValueValidator(999999999)],
     )
 
@@ -90,12 +95,14 @@ class ActualizarDetalleProfesionalForm(ModelForm):
             "username",
             "email",
             "name",
+            "telefono",
             "is_active",
         )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["telefono"].initial = self.instance.profesional.telefono
+        self.fields["name"].help_text = "Nombre completo del profesional"
 
     def clean_rut(self):
         rut = str(self.cleaned_data["rut"]).upper()
@@ -129,9 +136,6 @@ class CrearEmpresaForm(ModelForm):
         self.fields["rut"].help_text = "Sin guión ni puntos"
         self.fields["direccion"].widget = widgets.TextInput()
         self.fields["telefono"].widget = widgets.TextInput(attrs={"maxlength": 9})
-        for field in self.fields:
-            if not self.fields[field].help_text:
-                self.fields[field].help_text = ""
 
     def clean_rut(self):
         rut = str(self.cleaned_data["rut"]).upper()
