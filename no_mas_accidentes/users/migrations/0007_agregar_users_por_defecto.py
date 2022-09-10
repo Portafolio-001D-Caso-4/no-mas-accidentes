@@ -65,8 +65,8 @@ datos_clientes = [
             name="Juan Robles",
             email="ju.roblesb@duocuc.cl",
             username="ju.roblesb",
-            rut="250474474",
-            password="250474474"
+            rut="204186642",
+            password="204186642"
         ),
         "datos_empresa":dict(
             rut="96928510",
@@ -77,7 +77,7 @@ datos_clientes = [
             longitud=None,
             esta_activa=True,
             telefono=955347157,
-            profesional_asignado_rut=254186642
+            profesional_asignado_rut=204186642
         )
     }
 ]
