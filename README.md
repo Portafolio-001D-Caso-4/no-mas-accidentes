@@ -1,81 +1,61 @@
-# no-mas-accidentes
+# No más accidentes
+> Sistema de gestión empresarial de prevención de riesgos.
+> Repositorio [Github](https://github.com/Portafolio-001D-Caso-4/no-mas-accidentes)
 
-CASO 4: No mas accidentes
+## Tecnologías usadas
+- Python 3.9.13
+- PostgreSQL 14.5
+- Mailhog 1.1.0
+- Redis 6.0
+- Docker 20.10
+- Django
 
-[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
-[![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+## Requerimientos de instalación
+**Ambiente Windows:**
+- Docker 20.10 o similar (Recomendamos usar Docker Desktop 4.12.0). Puedes chequearlo con `docker version`
+- Docker compose. Puedes chequearlo con `docker-compose --version`
+- Git. Puedes chequearlo con `git --version`
+- Python 3.6 o superior. Puedes chequearlo con `python -- version`
 
-## Settings
 
-Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).
 
-## Basic Commands
+## Instalación
+- Hacer un git clone del proyecto en la rama `main`
+	```bash
+	git clone https://github.com/Portafolio-001D-Caso-4/no-mas-accidentes.git
+	```
+- Iniciar servicio de Docker. Si usa Docker Desktop, solo debe iniciar el programa.
+- En el root del proyecto, realizar la build del programa utilizando `docker-compose`
+	```bash
+	docker-compose -f local.yml build
+	```
+- Iniciar el programa utilizando `docker-compose`
+	```bash
+	docker-compose -f local.yml up
+	```
 
-### Setting Up Your Users
+## Uso
 
--   To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
+- **Aplicación principal**: `localhost:8000`
+	Aplicación en Django, principal producto a utilizar.
+	Debes crear un usuario con el siguiente comando:
+TODO: Generar script para creación de usuario
+- **Base de datos**: `localhost:5432`
+	Puedes conectarte a la base de datos utilizando las credenciales ubicadas en `.envs/.local/.postgres` Recomendamos utilizar `PGadmin` como cliente
+- **Mailhog**: `localhost:8025`
+	 Para ver los correos electrónicos enviados
+- **Redis**: `localhost:6379`
+	Para conectarse al servicio de storage y cache. Recomendamos utilizar `RedisInsightv-2` como cliente
+- **Flower**: `localhost:5555`
+	Para conocer el estado de las tareas asíncronas
 
--   To create a **superuser account**, use this command:
+Si alguno de estos puertos colisiona con algún servicio que estés usando, puedes cambiarlos en las variables de `ports` expuestos en el archivo `local.yml`
 
-        $ python manage.py createsuperuser
 
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
-
-### Type checks
-
-Running type checks with mypy:
-
-    $ mypy no_mas_accidentes
-
-### Test coverage
-
-To run the tests, check your test coverage, and generate an HTML coverage report:
-
-    $ coverage run -m pytest
-    $ coverage html
-    $ open htmlcov/index.html
-
-#### Running tests with pytest
-
-    $ pytest
-
-### Live reloading and Sass CSS compilation
-
-Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html#sass-compilation-live-reloading).
-
-### Celery
-
-This app comes with Celery.
-
-To run a celery worker:
-
-``` bash
-cd no_mas_accidentes
-celery -A config.celery_app worker -l info
+## Testing
+Para correr los tests, debes utilizar
+```bash
+docker-compose -f local.yml run --rm django pytest
 ```
-
-Please note: For Celery's import magic to work, it is important *where* the celery commands are run. If you are in the same folder with *manage.py*, you should be right.
-
-### Email Server
-
-In development, it is often nice to be able to see emails that are being sent from your application. For that reason local SMTP server [MailHog](https://github.com/mailhog/MailHog) with a web interface is available as docker container.
-
-Container mailhog will start automatically when you will run all docker containers.
-Please check [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html) for more details how to start all containers.
-
-With MailHog running, to view messages that are sent by your application, open your browser and go to `http://127.0.0.1:8025`
-
-### Sentry
-
-Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
-The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
-
-You must set the DSN url in production.
-
-## Deployment
-
-The following details how to deploy this application.
-
-### Docker
-
-See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).
+## Estado del proyecto
+En progreso, actualmente en la iteración 1 de 3.
