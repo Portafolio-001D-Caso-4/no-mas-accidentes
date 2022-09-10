@@ -75,8 +75,6 @@ class Checklist(models.Model):
 class Participante(models.Model):
     nombre = models.CharField(max_length=255)
     email = models.EmailField()
-    rut = models.CharField(
-        max_length=9, unique=True, validators=[validators.validar_rut]
-    )
+    rut = models.CharField(max_length=9, validators=[validators.validar_rut])
     asiste = models.BooleanField(default=False)
     servicio = models.ForeignKey(Servicio, null=True, on_delete=models.SET_NULL)
