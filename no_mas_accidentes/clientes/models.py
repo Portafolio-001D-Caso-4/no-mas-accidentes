@@ -78,3 +78,47 @@ class Contrato(models.Model):
     creado_en = models.DateTimeField(auto_now_add=True)
     archivo = models.FileField(upload_to="contratos/", null=True, blank=True)
     empresa = models.ForeignKey(Empresa, null=True, on_delete=models.SET_NULL)
+
+
+class FacturaMensual(models.Model):
+    expiracion = models.DateField()
+    total = models.PositiveIntegerField(validators=[MaxValueValidator(100_000_000)])
+    num_capacitaciones = models.PositiveIntegerField(
+        validators=[MaxValueValidator(1_000)]
+    )
+    num_capacitaciones_extra = models.PositiveIntegerField(
+        validators=[MaxValueValidator(1_000)]
+    )
+    num_visitas = models.PositiveIntegerField(validators=[MaxValueValidator(1_000)])
+    num_visitas_extra = models.PositiveIntegerField(
+        validators=[MaxValueValidator(1_000)]
+    )
+    num_asesorias = models.PositiveIntegerField(validators=[MaxValueValidator(1_000)])
+    num_asesorias_extra = models.PositiveIntegerField(
+        validators=[MaxValueValidator(1_000)]
+    )
+    num_llamadas = models.PositiveIntegerField(validators=[MaxValueValidator(1_000)])
+    num_llamadas_fuera_horario = models.PositiveIntegerField(
+        validators=[MaxValueValidator(1_000)]
+    )
+    num_modificaciones_checklist = models.PositiveIntegerField(
+        validators=[MaxValueValidator(100)]
+    )
+    num_modificaciones_checklist_extra = models.PositiveIntegerField(
+        validators=[MaxValueValidator(100)]
+    )
+    num_modificaciones_reporte = models.PositiveIntegerField(
+        validators=[MaxValueValidator(100)]
+    )
+    num_modificaciones_reporte_extra = models.PositiveIntegerField(
+        validators=[MaxValueValidator(100)]
+    )
+
+    forma_pago = models.CharField(max_length=100)
+    es_pagado = models.BooleanField(default=False, blank=True)
+    contrato = models.ForeignKey(Contrato, null=True, on_delete=models.SET_NULL)
+    generado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+    pagado_por = models.ForeignKey(
+        "users.User", null=True, blank=True, on_delete=models.SET_NULL
+    )

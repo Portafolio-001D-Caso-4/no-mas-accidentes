@@ -14,3 +14,11 @@ class Profesional(models.Model):
 
     def __str__(self):
         return f"{self.usuario.rut} - {self.usuario.name}"
+
+
+class HorarioProfesional(models.Model):
+    fecha_inicio = models.DateField()
+    fecha_termino = models.DateField()
+    desde = models.TimeField()
+    hasta = models.TimeField()
+    profesional = models.ForeignKey(Profesional, null=True, on_delete=models.SET_NULL)

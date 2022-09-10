@@ -83,7 +83,7 @@ LOCAL_APPS = [
     "no_mas_accidentes.clientes",
     "no_mas_accidentes.profesionales",
     "no_mas_accidentes.administracion",
-    # Your stuff: custom apps go here
+    "no_mas_accidentes.servicios",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
