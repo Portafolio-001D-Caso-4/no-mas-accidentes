@@ -55,3 +55,17 @@ class Evento(models.Model):
 
     creado_en = models.DateTimeField(auto_now_add=True)
     servicio = models.ForeignKey(Servicio, null=True, on_delete=models.SET_NULL)
+
+
+class ChecklistBase(models.Model):
+    items = models.JSONField()  # pregunta: respuesta
+    empresa = models.ForeignKey(Empresa, null=True, on_delete=models.SET_NULL)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+
+class Checklist(models.Model):
+    items = models.JSONField()  # pregunta: respuesta
+    actualizado_en = models.DateTimeField(auto_now=True)
+    aplicado_en = models.DateTimeField(auto_now_add=True)
+    servicio = models.OneToOneField(Servicio, null=True, on_delete=models.SET_NULL)
