@@ -3,6 +3,7 @@ from django.db import models
 
 from no_mas_accidentes.clientes.models import Empresa
 from no_mas_accidentes.profesionales.models import Profesional
+from no_mas_accidentes.users import validators
 
 
 class Servicio(models.Model):
@@ -69,3 +70,13 @@ class Checklist(models.Model):
     actualizado_en = models.DateTimeField(auto_now=True)
     aplicado_en = models.DateTimeField(auto_now_add=True)
     servicio = models.OneToOneField(Servicio, null=True, on_delete=models.SET_NULL)
+
+
+class Participante(models.Model):
+    nombre = models.CharField(max_length=255)
+    email = models.EmailField()
+    rut = models.CharField(
+        max_length=9, unique=True, validators=[validators.validar_rut]
+    )
+    asiste = models.BooleanField(default=False)
+    servicio = models.ForeignKey(Servicio, null=True, on_delete=models.SET_NULL)
