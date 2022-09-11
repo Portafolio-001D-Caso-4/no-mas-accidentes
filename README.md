@@ -36,14 +36,15 @@
 
 ## Uso
 
+Debes abrir lo siguiente para usar la aplicación:
 - **Aplicación principal**: `localhost:8000`
 	Aplicación en Django, principal producto a utilizar.
-	Debes crear un usuario con el siguiente comando:
-TODO: Generar script para creación de usuario
-- **Base de datos**: `localhost:5432`
-	Puedes conectarte a la base de datos utilizando las credenciales ubicadas en `.envs/.local/.postgres` Recomendamos utilizar `PGadmin` como cliente
 - **Mailhog**: `localhost:8025`
 	 Para ver los correos electrónicos enviados
+
+Solo necesario si deseas conocer los datos en los storages y el estado de las tareas:
+- **Base de datos**: `localhost:5432`
+	Puedes conectarte a la base de datos utilizando las credenciales ubicadas en `.envs/.local/.postgres` Recomendamos utilizar `PGadmin` como cliente
 - **Redis**: `localhost:6379`
 	Para conectarse al servicio de storage y cache. Recomendamos utilizar `RedisInsightv-2` como cliente
 - **Flower**: `localhost:5555`
@@ -51,6 +52,16 @@ TODO: Generar script para creación de usuario
 
 Si alguno de estos puertos colisiona con algún servicio que estés usando, puedes cambiarlos en las variables de `ports` expuestos en el archivo `local.yml`
 
+Vienen incluidos los siguientes usuarios para su uso, donde sus credenciales son:
+- Administrador:
+  - correo electrónico: lu.correab@duocuc.cl
+  - password: 192140730
+- Cliente:
+  - correo electrónico: ju.roblesb@duocuc.cl
+  - password: 204186642
+- Profesional:
+  - correo electrónico: lu.portilla@duocuc.cl
+  - password: 254186642
 
 ## Testing
 Para correr los tests, debes utilizar
