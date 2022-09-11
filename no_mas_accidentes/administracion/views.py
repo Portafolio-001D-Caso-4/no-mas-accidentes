@@ -13,6 +13,7 @@ from no_mas_accidentes.administracion.business_logic.contrato import (
 )
 from no_mas_accidentes.administracion.constants import app_name
 from no_mas_accidentes.administracion.forms import (
+    ActualizarContratoForm,
     ActualizarDetalleClienteForm,
     ActualizarDetalleEmpresaForm,
     ActualizarDetalleProfesionalForm,
@@ -238,14 +239,41 @@ class DetalleEmpresaContratosView(EsAdministradorMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["empresa"] = Empresa.objects.get(pk=self.kwargs["pk"])
+        empresa = Empresa.objects.get(pk=self.kwargs["pk"])
+        context["empresa"] = empresa
         return context
+
+
+class DetalleEmpresaContratoView(EsAdministradorMixin, SuccessMessageMixin, UpdateView):
+    template_name = f"{app_name}/detalle_empresa/detalle_contrato.html"
+    form_class = ActualizarContratoForm
+    queryset = Contrato.objects.all()
+
+    def get_success_url(self) -> str:
+        return reverse_lazy(
+            f"{app_name}:mantenedor_empresas_detalle_contratos",
+            kwargs={"pk": self.kwargs["pk"]},
+        )
+
+    def get_success_message(self, cleaned_data):
+        return "Contrato cargado satisfactoriamente"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["empresa"] = self.object
+        return context
+
+    def get_object(self):
+        return self.queryset.get(
+            id=self.kwargs["contrato_id"], empresa_id=self.kwargs["pk"]
+        )
 
 
 lista_empresas_view = ListaEmpresasView.as_view()
 crear_empresa_view = CrearEmpresaView.as_view()
 detalle_empresa_informacion_view = DetalleEmpresaInformacionView.as_view()
 detalle_empresa_contratos_view = DetalleEmpresaContratosView.as_view()
+detalle_empresa_contrato_view = DetalleEmpresaContratoView.as_view()
 
 
 @login_required

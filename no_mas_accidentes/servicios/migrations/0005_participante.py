@@ -8,7 +8,7 @@ import no_mas_accidentes.users.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('servicios', '0005_agregar_fechas_checklist'),
+        ('servicios', '0004_checklist_checklistbase'),
     ]
 
     operations = [

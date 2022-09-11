@@ -1,15 +1,15 @@
 {% extends 'administracion/base.html' %}
 
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block contents %}
 <div class="row">
     <div class="col-lg-12">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-3">
-                    <h4 class="card-title">Crear nuevo cliente</h4>
-                    <div class="col-lg-12 mt-5">
+            <div class="card shadow-sm">
+                <h5 class="card-header ">Crear cliente</h5>
+                    <div class="card-body col-lg-12 mt-5">
                         <form action="" method="post">
                             {% csrf_token %}
 
@@ -17,27 +17,29 @@
                                 {{ error }}
                             {% endfor %}
 
-                            {% for field in form %}
-                                <div class="mb-3">
-                                    <label>{{ field.label_tag }}</label>
-                                    <div>{{ field }}</div>
-                                    {% if field.errors %}
-                                      <ul class="parsley-errors-list filled" id="parsley-id-25" aria-hidden="false">
-                                      {% for error in field.errors %}
-                                          <li class="parsley-required">{{ error }}</li>
-                                      {% endfor %}
-                                      </ul>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                {% for field in form %}
+                                     <div class="mb-3">
+                                        <div>{{ field|as_crispy_field }}</div>
+                                    </div>
+                                    {% if forloop.last %}
+                                       </div>
+                                    {% else %}
+                                       {% if forloop.counter|divisibleby:"2" %}
+                                        </div>
+                                        <div class="col-lg-4">
+                                       {% endif %}
                                     {% endif %}
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
 
-                            <div class="d-flex flex-wrap gap-4 justify-content-center">
+                            <div class="d-flex flex-wrap gap-4 justify-content-end">
                                 <input type="submit" class="btn btn-primary waves-effect waves-light" value="Crear nuevo">
                                 <input type="submit" class="btn btn-danger waves-effect waves-light" onclick="window.location='{% url 'administracion:mantenedor_clientes_lista' %}'; return false;" value="Cancelar">
                             </div>
                         </form>
                     </div>
-                </div>
             </div>
         </div>
     </div>
