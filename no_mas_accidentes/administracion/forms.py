@@ -173,3 +173,14 @@ class ActualizarDetalleEmpresaForm(ModelForm):
         self.fields["telefono"].widget = widgets.TextInput(attrs={"maxlength": 9})
         self.fields["direccion"].label = "Dirección"
         self.fields["direccion"].widget = widgets.TextInput()
+
+
+class ActualizarContratoForm(ModelForm):
+    class Meta:
+        model = Contrato
+        fields = ("archivo",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["archivo"].required = True
+        self.fields["archivo"].help_text = "Solo se aceptan formatos PDF"
