@@ -1,6 +1,10 @@
 from datetime import time
 
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import (
+    FileExtensionValidator,
+    MaxValueValidator,
+    MinValueValidator,
+)
 from django.db import models
 
 from no_mas_accidentes.users import validators as users_validators
@@ -76,7 +80,12 @@ class Contrato(models.Model):
 
     esta_activo = models.BooleanField(default=True)
     creado_en = models.DateTimeField(auto_now_add=True)
-    archivo = models.FileField(upload_to="contratos/", null=True, blank=True)
+    archivo = models.FileField(
+        upload_to="contratos/",
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+    )
     empresa = models.ForeignKey(Empresa, null=True, on_delete=models.SET_NULL)
 
 
