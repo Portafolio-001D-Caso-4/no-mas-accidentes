@@ -77,7 +77,7 @@ datos_clientes = [
             longitud=None,
             esta_activa=True,
             telefono=955347157,
-            profesional_asignado_rut=204186642
+            profesional_asignado_rut=254186642
         )
     }
 ]
