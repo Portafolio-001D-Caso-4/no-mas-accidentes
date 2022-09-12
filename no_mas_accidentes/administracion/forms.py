@@ -39,6 +39,7 @@ class ActualizarDetalleClienteForm(ModelForm):
         fields = ("rut", "username", "email", "name", "empresa", "is_active")
 
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.fields["name"].help_text = "Nombre completo del cliente"
 
     def clean_rut(self):
