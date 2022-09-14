@@ -329,3 +329,9 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+CELERY_BEAT_SCHEDULE = {
+    "crear-horarios-profesionales": {
+        "task": "no_mas_accidentes.profesionales.tasks.crear_periodicamente_horarios_profesionales",
+        "schedule": 60,
+    },
+}
