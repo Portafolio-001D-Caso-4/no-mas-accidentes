@@ -22,3 +22,11 @@ class HorarioProfesional(models.Model):
     desde = models.TimeField()
     hasta = models.TimeField()
     profesional = models.ForeignKey(Profesional, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return (
+            f"{self.fecha_inicio} - {self.fecha_termino} - {self.desde} - {self.hasta}"
+        )
+
+    class Meta:
+        unique_together = ["desde", "profesional", "fecha_inicio"]
