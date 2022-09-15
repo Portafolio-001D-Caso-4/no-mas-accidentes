@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from django.contrib.auth import get_user_model
-from factory import Faker, post_generation
+from factory import Faker, fuzzy, post_generation
 from factory.django import DjangoModelFactory
 
 
@@ -11,6 +11,7 @@ class UserFactory(DjangoModelFactory):
     username = Faker("user_name")
     email = Faker("email")
     name = Faker("name")
+    rut = fuzzy.FuzzyChoice(["187034779", "79817805", "181455756", "178859005"])
 
     @post_generation
     def password(self, create: bool, extracted: Sequence[Any], **kwargs):
@@ -30,4 +31,4 @@ class UserFactory(DjangoModelFactory):
 
     class Meta:
         model = get_user_model()
-        django_get_or_create = ["username"]
+        django_get_or_create = ["username", "rut"]

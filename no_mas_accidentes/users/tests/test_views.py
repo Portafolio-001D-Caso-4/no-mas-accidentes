@@ -10,7 +10,6 @@ from django.urls import reverse
 
 from no_mas_accidentes.users.forms import UserAdminChangeForm
 from no_mas_accidentes.users.models import User
-from no_mas_accidentes.users.tests.factories import UserFactory
 from no_mas_accidentes.users.views import (
     UserRedirectView,
     UserUpdateView,
@@ -72,22 +71,23 @@ class TestUserUpdateView:
 
 
 class TestUserRedirectView:
-    def test_get_redirect_url(self, user: User, rf: RequestFactory):
+    def test_get_redirect_url(self, usuario_cliente: User, rf: RequestFactory):
         view = UserRedirectView()
         request = rf.get("/fake-url")
-        request.user = user
+
+        request.user = usuario_cliente
 
         view.request = request
 
-        assert view.get_redirect_url() == f"/users/{user.username}/"
+        assert view.get_redirect_url() == "/clientes/home/"
 
 
 class TestUserDetailView:
-    def test_authenticated(self, user: User, rf: RequestFactory):
+    def test_authenticated(self, usuario_cliente: User, rf: RequestFactory):
         request = rf.get("/fake-url/")
-        request.user = UserFactory()
+        request.user = usuario_cliente
 
-        response = user_detail_view(request, username=user.username)
+        response = user_detail_view(request, username=usuario_cliente.username)
 
         assert response.status_code == 200
 
