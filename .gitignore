@@ -332,3 +332,4 @@ no_mas_accidentes/media/
 .envs/.local
 !.envs/.local/
 env
+.envs/.production

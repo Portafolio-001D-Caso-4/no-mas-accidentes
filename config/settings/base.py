@@ -335,3 +335,5 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 60,
     },
 }
+
+SLACK_TOKEN = env("SLACK_TOKEN", default="")
