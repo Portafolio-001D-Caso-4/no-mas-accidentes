@@ -18,16 +18,16 @@
 
             var calendarEl = document.getElementById('calendar');
 
-            function addNewEvent(info) {
-                addEvent.modal('show');
-                formEvent.removeClass("was-validated");
-                formEvent[0].reset();
-
-                $("#event-title").val();
-                $('#event-category').val();
-                modalTitle.text('Add Event');
-                newEventData = info;
-            }
+            // function addNewEvent(info) {
+            //     addEvent.modal('show');
+            //     formEvent.removeClass("was-validated");
+            //     formEvent[0].reset();
+            //
+            //     $("#event-title").val();
+            //     $('#event-category').val();
+            //     modalTitle.text('Add Event');
+            //     newEventData = info;
+            // }
 
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
