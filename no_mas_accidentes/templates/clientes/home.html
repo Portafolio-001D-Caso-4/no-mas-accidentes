@@ -275,7 +275,8 @@ var defaultEvents = [
       end: new Date({{agenda.year }}, {{ agenda.month }}-1, {{ agenda.day }}, {{ agenda.end_hour }}, {{ agenda.end_min }}),
       url: '{{ agenda.url }}',
       className: '{{ agenda.class_name }}',
-      profesionalAsignado: '{{ agenda.profesional_asignado }}'
+      profesionalAsignado: '{{ agenda.profesional_asignado }}',
+      empresa: '{{ agenda.empresa }}'
   },
   {% endfor %}
 ];
