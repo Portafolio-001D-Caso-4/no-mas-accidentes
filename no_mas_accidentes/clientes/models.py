@@ -91,36 +91,44 @@ class Contrato(models.Model):
 
 class FacturaMensual(models.Model):
     expiracion = models.DateField()
-    total = models.PositiveIntegerField(validators=[MaxValueValidator(100_000_000)])
+    total = models.PositiveIntegerField(
+        validators=[MaxValueValidator(100_000_000)], default=0
+    )
     num_capacitaciones = models.PositiveIntegerField(
-        validators=[MaxValueValidator(1_000)]
+        validators=[MaxValueValidator(1_000)], default=0
     )
     num_capacitaciones_extra = models.PositiveIntegerField(
-        validators=[MaxValueValidator(1_000)]
+        validators=[MaxValueValidator(1_000)], default=0
     )
-    num_visitas = models.PositiveIntegerField(validators=[MaxValueValidator(1_000)])
+    num_visitas = models.PositiveIntegerField(
+        validators=[MaxValueValidator(1_000)], default=0
+    )
     num_visitas_extra = models.PositiveIntegerField(
-        validators=[MaxValueValidator(1_000)]
+        validators=[MaxValueValidator(1_000)], default=0
     )
-    num_asesorias = models.PositiveIntegerField(validators=[MaxValueValidator(1_000)])
+    num_asesorias = models.PositiveIntegerField(
+        validators=[MaxValueValidator(1_000)], default=0
+    )
     num_asesorias_extra = models.PositiveIntegerField(
-        validators=[MaxValueValidator(1_000)]
+        validators=[MaxValueValidator(1_000)], default=0
     )
-    num_llamadas = models.PositiveIntegerField(validators=[MaxValueValidator(1_000)])
+    num_llamadas = models.PositiveIntegerField(
+        validators=[MaxValueValidator(1_000)], default=0
+    )
     num_llamadas_fuera_horario = models.PositiveIntegerField(
-        validators=[MaxValueValidator(1_000)]
+        validators=[MaxValueValidator(1_000)], default=0
     )
     num_modificaciones_checklist = models.PositiveIntegerField(
-        validators=[MaxValueValidator(100)]
+        validators=[MaxValueValidator(100)], default=0
     )
     num_modificaciones_checklist_extra = models.PositiveIntegerField(
-        validators=[MaxValueValidator(100)]
+        validators=[MaxValueValidator(100)], default=0
     )
     num_modificaciones_reporte = models.PositiveIntegerField(
-        validators=[MaxValueValidator(100)]
+        validators=[MaxValueValidator(100)], default=0
     )
     num_modificaciones_reporte_extra = models.PositiveIntegerField(
-        validators=[MaxValueValidator(100)]
+        validators=[MaxValueValidator(100)], default=0
     )
 
     forma_pago = models.CharField(max_length=100)
