@@ -7,7 +7,6 @@ hiredis==2.0.0  # https://github.com/redis/hiredis-py
 celery==5.2.7  # pyup: < 6.0  # https://github.com/celery/celery
 django-celery-beat==2.3.0  # https://github.com/celery/django-celery-beat
 flower==1.2.0  # https://github.com/mher/flower
-
 # Django
 # ------------------------------------------------------------------------------
 django==3.2.15  # pyup: < 4.0  # https://www.djangoproject.com/
@@ -25,3 +24,4 @@ drf-spectacular==0.23.1  # https://github.com/tfranzel/drf-spectacular
 
 reportlab==3.6.11
 slack-sdk==3.18.3
+arrow==1.2.3
