@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='Servicio',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo', models.CharField(choices=[('ASESORIA EMERGENCIA', 'ASESORIA EMERGENCIA'), ('ASESORIA FISCALIZACION ', 'ASESORIA FISCALIZACION'), ('CAPACITACION', 'CAPACITACION'), ('VISITA', 'VISITA'), ('LLAMADA', 'LLAMADA')], max_length=256)),
+                ('tipo', models.CharField(choices=[('ASESORIA EMERGENCIA', 'ASESORIA EMERGENCIA'), ('ASESORIA FISCALIZACION', 'ASESORIA FISCALIZACION'), ('CAPACITACION', 'CAPACITACION'), ('VISITA', 'VISITA'), ('LLAMADA', 'LLAMADA')], max_length=256)),
                 ('creado_en', models.DateTimeField(auto_now_add=True)),
                 ('actualizado_en', models.DateTimeField(auto_now=True)),
                 ('agendado_para', models.DateTimeField(blank=True, null=True)),
