@@ -1,7 +1,14 @@
+import datetime
+
 from django.views.generic import TemplateView
 
 from no_mas_accidentes.clientes.constants import app_name
 from no_mas_accidentes.clientes.mixins import EsClienteMixin
+from no_mas_accidentes.clientes.models import FacturaMensual
+from no_mas_accidentes.servicios.business_logic.servicios import (
+    traer_context_data_de_servicios_por_empresa,
+)
+from no_mas_accidentes.servicios.models import Evento
 
 
 class Home(EsClienteMixin, TemplateView):
@@ -9,58 +16,36 @@ class Home(EsClienteMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # factura_mensual = FacturaMensual.objects.last()
-        context["num_visitas"] = 1
-        context["num_capacitaciones"] = 2
-        context["num_asesorias"] = 3
-        context["num_llamadas"] = 4
+        id_empresa = self.request.user.empresa_id
+        factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
+            contrato__empresa_id=id_empresa
+        ).last()
+        context["num_visitas"] = factura_mensual.num_visitas
+        context["num_capacitaciones"] = factura_mensual.num_capacitaciones
+        context["num_asesorias"] = factura_mensual.num_asesorias
+        context["num_llamadas"] = factura_mensual.num_llamadas
 
-        context["max_num_visitas"] = 4
-        context["max_num_capacitaciones"] = 2
-        context["max_num_asesorias"] = 4
+        context["max_num_visitas"] = factura_mensual.contrato.max_visitas_mensuales
+        context[
+            "max_num_capacitaciones"
+        ] = factura_mensual.contrato.max_capacitaciones_mensuales
+        context["max_num_asesorias"] = factura_mensual.contrato.max_asesorias_mensuales
 
-        context["num_llamadas_extra"] = 2
-        context["num_accidentes"] = 1
-        context["num_multas"] = 1
+        context["num_llamadas_extra"] = factura_mensual.num_llamadas_fuera_horario
+        num_accidentes = Evento.objects.filter(
+            fecha__gte=factura_mensual.expiracion - datetime.timedelta(days=30),
+            tipo="ACCIDENTE",
+        ).count()
+        num_multas = Evento.objects.filter(
+            fecha__gte=factura_mensual.expiracion - datetime.timedelta(days=30),
+            tipo="MULTA",
+        ).count()
 
-        agendas = [
-            {
-                "title": "Capacitación 1",
-                "month": 9,
-                "day": 22,
-                "year": 2022,
-                "start_hour": 10,
-                "start_min": 0,
-                "start_second": 0,
-                "end_hour": 11,
-                "end_min": 0,
-                "end_second": 0,
-                "all_day": False,
-                "class_name": "bg-warning",
-                "url": "#",
-                "profesional_asignado": "Luis Portilla",
-                "empresa": "Gasco S.A.",
-            },
-            {
-                "title": "Capacitación 2",
-                "month": 12,
-                "day": 15,
-                "year": 2022,
-                "start_hour": 10,
-                "start_min": 0,
-                "start_second": 0,
-                "end_hour": 11,
-                "end_min": 0,
-                "end_second": 0,
-                "all_day": False,
-                "class_name": "bg-warning",
-                "url": "#",
-                "profesional_asignado": "Luis Portilla",
-                "empresa": "Gasco S.A.",
-            },
-        ]
+        context["num_accidentes"] = num_accidentes
+        context["num_multas"] = num_multas
+
+        agendas = traer_context_data_de_servicios_por_empresa(id_empresa=id_empresa)
         context["agendas"] = agendas
-
         return context
 
 
