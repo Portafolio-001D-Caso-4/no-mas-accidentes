@@ -1,5 +1,9 @@
 import datetime
 
+import arrow
+from django.db.models import DateTimeField, ExpressionWrapper, F
+
+from no_mas_accidentes.profesionales.constants import HORAS_NECESARIAS_ANTES_DE_AGENDAR
 from no_mas_accidentes.profesionales.models import HorarioProfesional
 from no_mas_accidentes.utils import fechas
 
@@ -41,3 +45,19 @@ def generar_horario_profesional(
                 )
             )
     return horarios
+
+
+def traer_horarios_futuros_de_profesional(
+    id_profesional: int,
+) -> list[HorarioProfesional]:
+    dia_actual = arrow.utcnow().shift(hours=+HORAS_NECESARIAS_ANTES_DE_AGENDAR).datetime
+    horarios = (
+        HorarioProfesional.objects.all()
+        .annotate(
+            fecha_inicio_desde=ExpressionWrapper(
+                F("fecha_inicio") + F("desde"), output_field=DateTimeField()
+            )
+        )
+        .filter(profesional_id=id_profesional, fecha_inicio_desde__gte=dia_actual)
+    )
+    return list(horarios)

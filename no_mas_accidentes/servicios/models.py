@@ -3,17 +3,12 @@ from django.db import models
 
 from no_mas_accidentes.clientes.models import Empresa
 from no_mas_accidentes.profesionales.models import Profesional
+from no_mas_accidentes.servicios.constants import OPCIONES_DE_SERVICIOS
 from no_mas_accidentes.users import validators
 
 
 class Servicio(models.Model):
-    TIPOS = [
-        ("ASESORIA EMERGENCIA", "ASESORIA EMERGENCIA"),
-        ("ASESORIA FISCALIZACION ", "ASESORIA FISCALIZACION"),
-        ("CAPACITACION", "CAPACITACION"),
-        ("VISITA", "VISITA"),
-        ("LLAMADA", "LLAMADA"),
-    ]
+    TIPOS = OPCIONES_DE_SERVICIOS
     tipo = models.CharField(choices=TIPOS, max_length=256)
     profesional = models.ForeignKey(Profesional, null=True, on_delete=models.SET_NULL)
     empresa = models.ForeignKey(Empresa, null=True, on_delete=models.SET_NULL)

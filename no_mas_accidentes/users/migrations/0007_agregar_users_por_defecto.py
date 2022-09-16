@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import migrations
 from django.contrib.auth.hashers import make_password
 
+import arrow
 
 datos_administradores = [
     dict(
@@ -87,6 +88,7 @@ def crear_clientes(apps):
     Empresa = apps.get_model('clientes', 'Empresa')
     Contrato = apps.get_model('clientes', 'Contrato')
     Profesional = apps.get_model('profesionales', 'Profesional')
+    FacturaMensual = apps.get_model('clientes', 'FacturaMensual')
 
     grupo_cliente = Group.objects.get(name="cliente")
     for datos_cliente in datos_clientes:
@@ -99,6 +101,13 @@ def crear_clientes(apps):
 
         contrato = Contrato(empresa=empresa)
         contrato.save()
+
+        factura_mensual = FacturaMensual(
+            expiracion=arrow.utcnow().replace(day=contrato.dia_facturacion).datetime,
+            contrato=contrato,
+            total=contrato.valor_base
+        )
+        factura_mensual.save()
 
         password = datos_cliente["datos_user"].pop("password")
         usuario = User(**datos_cliente["datos_user"])
