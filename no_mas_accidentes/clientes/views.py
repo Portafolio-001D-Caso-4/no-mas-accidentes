@@ -12,6 +12,7 @@ from transbank.webpay.webpay_plus.transaction import Transaction
 from no_mas_accidentes.administracion.constants import (
     INFORMACION_EMPRESA_PREVENCION_CHILE,
 )
+from no_mas_accidentes.clientes.business_logic.pagos import realizar_pago_ultima_factura
 from no_mas_accidentes.clientes.constants import app_name
 from no_mas_accidentes.clientes.mixins import EsClienteMixin, EsClienteYAdeudadoMixin
 from no_mas_accidentes.clientes.models import FacturaMensual
@@ -78,7 +79,7 @@ class RealizarPagoView(EsClienteMixin, TemplateView):
         context["pago_realizado"] = False
 
         amount = factura_mensual.total
-        buy_order = str(arrow.utcnow().int_timestamp)
+        buy_order = f"e{arrow.utcnow().int_timestamp}"
         session_id = str(self.request.user.id)
         return_url = self.request.build_absolute_uri(
             location=reverse("clientes:recepcion_transaccion")
@@ -86,7 +87,6 @@ class RealizarPagoView(EsClienteMixin, TemplateView):
         response = Transaction.create(buy_order, session_id, amount, return_url)
         context["transbank_url"] = response.url
         context["transbank_token"] = response.token
-        print("c", context["transbank_token"])
 
         return context
 
@@ -103,9 +103,11 @@ class RecepcionTransaccionView(RedirectView):
             response = Transaction.commit(token=token)
             response_status_code = response.response_code
             response_status = response.status
+            id_usuario = response.session_id
         except TransactionCommitError as error:
             response_status = error.message
             response_status_code = error.code
+            id_usuario = None
         if response_status_code != 0 or response_status != "AUTHORIZED":
             messages.warning(
                 self.request,
@@ -115,6 +117,7 @@ class RecepcionTransaccionView(RedirectView):
             )
             self.url = reverse("clientes:realizar_pago")
         else:
+            realizar_pago_ultima_factura(id_cliente=int(id_usuario))
             messages.success(
                 self.request,
                 "Pago realizado satisfactoriamente, puede seguir utilizando el servicio.",
