@@ -4,6 +4,7 @@ from no_mas_accidentes.clientes.views import (
     empresa_adeudada_view,
     home_view,
     realizar_pago_view,
+    recepcion_transaccion_view,
     transaccion_exitosa_view,
 )
 
@@ -16,5 +17,10 @@ urlpatterns = [
         "transaccion-exitosa/",
         view=transaccion_exitosa_view,
         name="transaccion_exitosa",
+    ),
+    path(
+        "recepcion-transaccion/",
+        view=recepcion_transaccion_view,
+        name="recepcion_transaccion",
     ),
 ]
