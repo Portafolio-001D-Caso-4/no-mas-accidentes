@@ -139,3 +139,35 @@ class FacturaMensual(models.Model):
     pagado_por = models.ForeignKey(
         "users.User", null=True, blank=True, on_delete=models.SET_NULL
     )
+
+    @property
+    def valor_capacitaciones_extra(self):
+        return self.num_capacitaciones_extra * self.contrato.valor_capacitacion_extra
+
+    @property
+    def valor_visitas_extra(self):
+        return self.num_visitas_extra * self.contrato.valor_visita_extra
+
+    @property
+    def valor_asesorias_extra(self):
+        return self.num_asesorias_extra * self.contrato.valor_asesoria_extra
+
+    @property
+    def valor_llamadas_fuera_horario(self):
+        return (
+            self.num_llamadas_fuera_horario * self.contrato.valor_llamada_fuera_horario
+        )
+
+    @property
+    def valor_modificaciones_checklist_extra(self):
+        return (
+            self.num_modificaciones_checklist_extra
+            * self.contrato.valor_modificacion_checklist_extra
+        )
+
+    @property
+    def valor_modificaciones_reporte_extra(self):
+        return (
+            self.num_modificaciones_reporte_extra
+            * self.contrato.valor_modificacion_reporte_extra
+        )

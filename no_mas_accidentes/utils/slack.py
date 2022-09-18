@@ -7,13 +7,13 @@ class SlackWebClient:
     def __init__(self, token=None):
         self.client = WebClient(token=token)
 
-    def enviar_mensaje_a_canal(self, canal: str, mensaje: dict[str, Any]):
-        self.client.chat_postMessage(**mensaje, channel=canal)
+    def enviar_mensaje_a_canal(self, canal: str, texto: str, mensaje: dict[str, Any]):
+        self.client.chat_postMessage(text=texto, **mensaje, channel=canal)
 
-    def enviar_mensaje_a_cada_usuario(self, mensaje: dict[str, Any]):
+    def enviar_mensaje_a_cada_usuario(self, texto: str, mensaje: dict[str, Any]):
         members = self.client.users_list()["members"]
         for member in members:
-            self.client.chat_postMessage(**mensaje, channel=member["id"])
+            self.client.chat_postMessage(text=texto, **mensaje, channel=member["id"])
 
 
 class SlackMessage:
