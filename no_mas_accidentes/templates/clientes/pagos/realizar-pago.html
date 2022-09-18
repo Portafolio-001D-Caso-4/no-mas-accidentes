@@ -1,6 +1,7 @@
 {% extends 'clientes/base.html' %}
 
 {% load static %}
+{% load humanize %}
 
 {% block contents %}
 <div class="row">
@@ -18,81 +19,100 @@
                   <div class="row">
                   <div class="col-sm-6">
                           <address>
-                              <strong>Billed To:</strong><br>
-                              John Smith<br>
-                              1234 Main<br>
-                              Apt. 4B<br>
-                              Springfield, ST 54321
+                              <strong>Facturado a:</strong><br>
+                              {{ informacion_empresa.nombre }}<br>
+                              {{ informacion_empresa.rut }}<br>
+                              {{ informacion_empresa.servicio }}<br>
+                              {{ informacion_empresa.direccion }}
                           </address>
                       </div>
                       <div class="col-sm-6 text-sm-end">
                           <address class="mt-2 mt-sm-0">
-                              <strong>Shipped To:</strong><br>
-                              Kenny Rigdon<br>
-                              1234 Main<br>
-                              Apt. 4B<br>
-                              Springfield, ST 54321
+                              <strong>Cliente: </strong><br>
+                              {{ empresa.nombre }}<br>
+                              {{ empresa.rut }}<br>
+                              {{ empresa.giro }}<br>
+                              {{ empresa.direccion }}<br>
                           </address>
                       </div>
                   </div>
                   <div class="row">
                       <div class="col-sm-6 mt-3">
-                          <address>
-                              <strong>Payment Method:</strong><br>
-                              Visa ending **** 4242<br>
-                              jsmith@email.com
-                          </address>
+<!--                          <address>-->
+<!--                              <strong>Payment Method:</strong><br>-->
+<!--                              Visa ending **** 4242<br>-->
+<!--                              jsmith@email.com-->
+<!--                          </address>-->
                       </div>
                       <div class="col-sm-6 mt-3 text-sm-end">
                           <address>
-                              <strong>Order Date:</strong><br>
-                              October 16, 2019<br><br>
+                              <strong>Fecha de expiración:</strong><br>
+                              {{ factura_mensual.expiracion }}<br><br>
                           </address>
                       </div>
                   </div>
                   <div class="py-2 mt-3">
-                      <h3 class="font-size-15 fw-bold">Order summary</h3>
+                      <h3 class="font-size-15 fw-bold">Resumen de costos</h3>
                   </div>
                   <div class="table-responsive">
                       <table class="table table-nowrap">
                           <thead>
                               <tr>
-                                  <th style="width: 70px;">No.</th>
                                   <th>Item</th>
-                                  <th class="text-end">Price</th>
+                                  <th>Precio</th>
+                                  <th>Cantidad</th>
+                                  <th class="text-end">Precio total</th>
                               </tr>
                           </thead>
                           <tbody>
                               <tr>
-                                  <td>01</td>
-                                  <td>Skote - Admin Dashboard Template</td>
-                                  <td class="text-end">$499.00</td>
+                                  <td>Costo base mensual</td>
+                                  <td>${{ factura_mensual.contrato.valor_base|intcomma }}</td>
+                                  <td>1</td>
+                                  <td class="text-end">${{ factura_mensual.contrato.valor_base|intcomma }}</td>
+                              </tr>
+                              <tr>
+                                  <td>Capacitaciones extra</td>
+                                  <td>${{ factura_mensual.contrato.valor_capacitacion_extra|intcomma }}</td>
+                                  <td>{{ factura_mensual.num_capacitaciones_extra }}</td>
+                                  <td class="text-end">${{ factura_mensual.valor_capacitaciones_extra|intcomma }}</td>
+                              </tr>
+                              <tr>
+                                  <td>Visitas extra</td>
+                                  <td>${{ factura_mensual.contrato.valor_visita_extra|intcomma }}</td>
+                                  <td>{{ factura_mensual.num_visitas_extra }}</td>
+                                  <td class="text-end">${{ factura_mensual.valor_visitas_extra|intcomma }}</td>
+                              </tr>
+                              <tr>
+                                  <td>Asesorias extra</td>
+                                  <td>${{ factura_mensual.contrato.valor_asesoria_extra|intcomma }}</td>
+                                  <td>{{ factura_mensual.num_asesorias_extra }}</td>
+                                  <td class="text-end">${{ factura_mensual.valor_asesorias_extra|intcomma }}</td>
+                              </tr>
+                              <tr>
+                                  <td>Llamadas fuera de horario</td>
+                                  <td>${{ factura_mensual.contrato.valor_llamada_fuera_horario|intcomma }}</td>
+                                  <td>{{ factura_mensual.num_llamadas_fuera_horario }}</td>
+                                  <td class="text-end">${{ factura_mensual.valor_llamadas_fuera_horario|intcomma }}</td>
+                              </tr>
+                              <tr>
+                                  <td>Modificaciones checklist extra</td>
+                                  <td>${{ factura_mensual.contrato.valor_modificacion_checklist_extra|intcomma }}</td>
+                                  <td>{{ factura_mensual.num_modificaciones_checklist_extra }}</td>
+                                  <td class="text-end">${{ factura_mensual.valor_modificaciones_checklist_extra|intcomma }}</td>
+                              </tr>
+                              <tr>
+                                  <td>Modificaciones reporte extra</td>
+                                  <td>${{ factura_mensual.contrato.valor_modificacion_reporte_extra|intcomma }}</td>
+                                  <td>{{ factura_mensual.num_modificaciones_reporte_extra }}</td>
+                                  <td class="text-end">${{ factura_mensual.valor_modificaciones_reporte_extra|intcomma }}</td>
                               </tr>
 
-                              <tr>
-                                  <td>02</td>
-                                  <td>Skote - Landing Template</td>
-                                  <td class="text-end">$399.00</td>
-                              </tr>
 
                               <tr>
-                                  <td>03</td>
-                                  <td>Veltrix - Admin Dashboard Template</td>
-                                  <td class="text-end">$499.00</td>
-                              </tr>
-                              <tr>
-                                  <td colspan="2" class="text-end">Sub Total</td>
-                                  <td class="text-end">$1397.00</td>
-                              </tr>
-                              <tr>
-                                  <td colspan="2" class="border-0 text-end">
-                                      <strong>Shipping</strong></td>
-                                  <td class="border-0 text-end">$13.00</td>
-                              </tr>
-                              <tr>
-                                  <td colspan="2" class="border-0 text-end">
+                                  <td colspan="3" class="border-0 text-end">
                                       <strong>Total</strong></td>
-                                  <td class="border-0 text-end"><h4 class="m-0">$1410.00</h4></td>
+                                  <td class="border-0 text-end"><h4 class="m-0">${{ factura_mensual.total|intcomma }}</h4></td>
                               </tr>
                           </tbody>
                       </table>

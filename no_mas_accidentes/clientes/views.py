@@ -7,6 +7,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from transbank.webpay.webpay_plus.transaction import Transaction
 
+from no_mas_accidentes.administracion.constants import (
+    INFORMACION_EMPRESA_PREVENCION_CHILE,
+)
 from no_mas_accidentes.clientes.constants import app_name
 from no_mas_accidentes.clientes.mixins import EsClienteMixin, EsClienteYAdeudadoMixin
 from no_mas_accidentes.clientes.models import FacturaMensual
@@ -74,6 +77,12 @@ class RealizarPagoView(EsClienteMixin, TemplateView):
         context["transbank_url"] = response.url
         context["transbank_token"] = response.token
 
+        context["informacion_empresa"] = INFORMACION_EMPRESA_PREVENCION_CHILE
+        context["empresa"] = self.request.user.empresa
+        factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
+            contrato__empresa=context["empresa"]
+        ).last()
+        context["factura_mensual"] = factura_mensual
         return context
 
 
