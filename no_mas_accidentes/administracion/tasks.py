@@ -21,7 +21,7 @@ def enviar_recordatorio_no_pago(id_factura_mensual: int, url_de_pago: str):
                 "url_de_pago": url_de_pago,
             },
         ),
-        "no-mas-accientes@example.com",
+        "no-mas-accidentes@example.com",
         list(factura_mensual.contrato.empresa.user_set.values_list("email", flat=True)),
         fail_silently=False,
     )
