@@ -9,7 +9,10 @@ from no_mas_accidentes.administracion.views import (
     detalle_empresa_contrato_view,
     detalle_empresa_contratos_view,
     detalle_empresa_informacion_view,
+    detalle_empresa_pago_view,
+    detalle_empresa_pagos_view,
     detalle_profesional_informacion_view,
+    enviar_recordatorio_no_pago_view,
     home_view,
     lista_clientes_view,
     lista_empresas_view,
@@ -75,8 +78,23 @@ urlpatterns = [
         name="mantenedor_empresas_detalle_contrato",
     ),
     path(
+        "mantenedor-empresas/<int:pk>/pagos",
+        view=detalle_empresa_pagos_view,
+        name="mantenedor_empresas_detalle_pagos",
+    ),
+    path(
+        "mantenedor-empresas/<int:pk>/pagos/<int:factura_mensual_id>",
+        view=detalle_empresa_pago_view,
+        name="mantenedor_empresas_detalle_pago",
+    ),
+    path(
         "contratos/<int:pk>/descarga_base",
         view=descarga_contrato_base_view,
         name="descarga_contrato_base_pdf",
+    ),
+    path(
+        "contratos/<int:pk>/enviar-recordatorio-no-pago/<int:factura_mensual_id>",
+        view=enviar_recordatorio_no_pago_view,
+        name="enviar_recordatorio_no_pago",
     ),
 ]

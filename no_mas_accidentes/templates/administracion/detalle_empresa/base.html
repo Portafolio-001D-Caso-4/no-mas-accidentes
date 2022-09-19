@@ -4,14 +4,14 @@
 {% block contents %}
 <div class="row">
     <div class="col-lg-12">
-        <div class="col-sm-12">
+        <div class="col-sm-12 d-print-none">
             <div class="text-sm-start">
                 <a type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" href="{% url 'administracion:mantenedor_empresas_lista' %}"><i class="mdi mdi-backburger me-1"></i>Volver al listado de empresas</a>
             </div>
         </div>
         <div class="card">
             <div class="card-body">
-                <ul class="nav nav-tabs" role="tablist">
+                <ul class="nav nav-tabs d-print-none" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link {% block nav_item_informacion %}{% endblock %}"  href="{% url 'administracion:mantenedor_empresas_detalle_informacion' pk=empresa.pk %}" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-address-card"></i></span>
@@ -25,7 +25,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_item_pagos %}{% endblock %}"  href="#messages" role="tab">
+                        <a class="nav-link {% block nav_item_pagos %}{% endblock %}"  href="{% url 'administracion:mantenedor_empresas_detalle_pagos' pk=empresa.pk %}" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-money-check"></i></span>
                             <span class="d-none d-sm-block">Pagos</span>
                         </a>

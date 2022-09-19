@@ -1,0 +1,16 @@
+{% extends "account/email/base_message.txt" %}
+{% load i18n %}
+{% autoescape off %}
+{% load account %}
+{% load humanize %}
+
+
+{% block content %}
+
+Estás recibiendo este correo electrónico porque tienes un pago pendiente correspondiente a la empresa {{ empresa.nombre }},
+de ${{ factura_mensual.total|intcomma }}, con fecha de pago en {{ factura_mensual.expiracion|date:"SHORT_DATE_FORMAT" }}.
+
+Haz click en el siguiente link para regularizar su situación: {{ url_de_pago }}
+
+{% endblock %}
+{% endautoescape %}
