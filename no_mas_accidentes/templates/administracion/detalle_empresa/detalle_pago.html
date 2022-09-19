@@ -1,0 +1,128 @@
+{% extends 'administracion/detalle_empresa/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+{% block nav_item_pagos %}active{% endblock %}
+{% block detalle_empresa_body %}
+<div class="card-body col-lg-12 mt-5">
+    <div class="row mb-2">
+        <div class="col-sm-12">
+              <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                  <h4 class="mb-sm-0 font-size-18">Factura mensual</h4>
+              </div>
+        </div><!-- end col-->
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+              <address>
+                  <strong>Facturado a:</strong><br>
+                  {{ informacion_empresa.nombre }}<br>
+                  {{ informacion_empresa.rut }}<br>
+                  {{ informacion_empresa.servicio }}<br>
+                  {{ informacion_empresa.direccion }}
+              </address>
+          </div>
+          <div class="col-sm-6 text-sm-end">
+              <address class="mt-2 mt-sm-0">
+                  <strong>Cliente: </strong><br>
+                  {{ empresa.nombre }}<br>
+                  {{ empresa.rut }}<br>
+                  {{ empresa.giro }}<br>
+                  {{ empresa.direccion }}<br>
+              </address>
+          </div>
+      </div>
+    <div class="row">
+        <div class="col-sm-6 mt-3">
+<!--                          <address>-->
+<!--                              <strong>Payment Method:</strong><br>-->
+<!--                              Visa ending **** 4242<br>-->
+<!--                              jsmith@email.com-->
+<!--                          </address>-->
+        </div>
+        <div class="col-sm-6 mt-3 text-sm-end">
+            <address>
+                <strong>Fecha de expiración:</strong><br>
+                {{ factura_mensual.expiracion }}<br><br>
+            </address>
+        </div>
+    </div>
+    <div class="py-2 mt-3">
+        <h3 class="font-size-15 fw-bold">Resumen de costos</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-nowrap">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th class="text-end">Precio total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Costo base mensual</td>
+                    <td>${{ factura_mensual.contrato.valor_base|intcomma }}</td>
+                    <td>1</td>
+                    <td class="text-end">${{ factura_mensual.contrato.valor_base|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Capacitaciones extra</td>
+                    <td>${{ factura_mensual.contrato.valor_capacitacion_extra|intcomma }}</td>
+                    <td>{{ factura_mensual.num_capacitaciones_extra }}</td>
+                    <td class="text-end">${{ factura_mensual.valor_capacitaciones_extra|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Visitas extra</td>
+                    <td>${{ factura_mensual.contrato.valor_visita_extra|intcomma }}</td>
+                    <td>{{ factura_mensual.num_visitas_extra }}</td>
+                    <td class="text-end">${{ factura_mensual.valor_visitas_extra|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Asesorias extra</td>
+                    <td>${{ factura_mensual.contrato.valor_asesoria_extra|intcomma }}</td>
+                    <td>{{ factura_mensual.num_asesorias_extra }}</td>
+                    <td class="text-end">${{ factura_mensual.valor_asesorias_extra|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Llamadas fuera de horario</td>
+                    <td>${{ factura_mensual.contrato.valor_llamada_fuera_horario|intcomma }}</td>
+                    <td>{{ factura_mensual.num_llamadas_fuera_horario }}</td>
+                    <td class="text-end">${{ factura_mensual.valor_llamadas_fuera_horario|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Modificaciones checklist extra</td>
+                    <td>${{ factura_mensual.contrato.valor_modificacion_checklist_extra|intcomma }}</td>
+                    <td>{{ factura_mensual.num_modificaciones_checklist_extra }}</td>
+                    <td class="text-end">${{ factura_mensual.valor_modificaciones_checklist_extra|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Modificaciones reporte extra</td>
+                    <td>${{ factura_mensual.contrato.valor_modificacion_reporte_extra|intcomma }}</td>
+                    <td>{{ factura_mensual.num_modificaciones_reporte_extra }}</td>
+                    <td class="text-end">${{ factura_mensual.valor_modificaciones_reporte_extra|intcomma }}</td>
+                </tr>
+
+
+                <tr>
+                    <td colspan="3" class="border-0 text-end">
+                        <strong>Total</strong></td>
+                    <td class="border-0 text-end"><h4 class="m-0">${{ factura_mensual.total|intcomma }}</h4></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="d-print-none">
+        <div class="float-end">
+            <form method="post" action='#'>
+<!--                              {% csrf_token %}-->
+                <a href="javascript:window.print()" class="btn btn-success waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
+<!--                              {% if not pago_realizado %}-->
+<!--                              <button value="submit" class="btn btn-primary w-md waves-effect waves-light">Pagar con Webpay</button>-->
+<!--                              {% endif %}-->
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

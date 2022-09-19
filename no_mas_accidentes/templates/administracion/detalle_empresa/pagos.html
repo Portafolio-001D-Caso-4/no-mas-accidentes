@@ -37,6 +37,9 @@
                                     <a href="{% url 'administracion:enviar_recordatorio_no_pago' pk=empresa.pk factura_mensual_id=factura_mensual.id %}" title="Enviar recordatorio"><i class="bx bxs-envelope"></i></a>
                                 </li>
                                 {% endif %}
+                                <li class="list-inline-item px-2">
+                                    <a href="{% url 'administracion:mantenedor_empresas_detalle_pago' pk=empresa.pk factura_mensual_id=factura_mensual.id %}" title="Ver detalle pago"><i class="bx bx-money"></i></a>
+                                </li>
                             </ul>
                         </td>
 

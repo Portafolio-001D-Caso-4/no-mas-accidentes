@@ -18,7 +18,10 @@ from rest_framework.decorators import api_view
 from no_mas_accidentes.administracion.business_logic.contrato import (
     generar_pdf_contrato_base,
 )
-from no_mas_accidentes.administracion.constants import app_name
+from no_mas_accidentes.administracion.constants import (
+    INFORMACION_EMPRESA_PREVENCION_CHILE,
+    app_name,
+)
 from no_mas_accidentes.administracion.forms import (
     ActualizarContratoForm,
     ActualizarDetalleClienteForm,
@@ -297,12 +300,30 @@ class DetalleEmpresaPagosView(EsAdministradorMixin, ListView):
         return context
 
 
+class DetalleEmpresaPagoView(EsAdministradorMixin, SuccessMessageMixin, TemplateView):
+    template_name = f"{app_name}/detalle_empresa/detalle_pago.html"
+    queryset = FacturaMensual.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["factura_mensual"] = self.get_object()
+        context["empresa"] = context["factura_mensual"].contrato.empresa
+        context["informacion_empresa"] = INFORMACION_EMPRESA_PREVENCION_CHILE
+        return context
+
+    def get_object(self):
+        return self.queryset.get(
+            id=self.kwargs["factura_mensual_id"], contrato__empresa_id=self.kwargs["pk"]
+        )
+
+
 lista_empresas_view = ListaEmpresasView.as_view()
 crear_empresa_view = CrearEmpresaView.as_view()
 detalle_empresa_informacion_view = DetalleEmpresaInformacionView.as_view()
 detalle_empresa_contratos_view = DetalleEmpresaContratosView.as_view()
 detalle_empresa_contrato_view = DetalleEmpresaContratoView.as_view()
 detalle_empresa_pagos_view = DetalleEmpresaPagosView.as_view()
+detalle_empresa_pago_view = DetalleEmpresaPagoView.as_view()
 
 
 @login_required
