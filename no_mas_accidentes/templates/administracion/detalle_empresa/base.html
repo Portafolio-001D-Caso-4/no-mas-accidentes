@@ -25,7 +25,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_item_pagos %}{% endblock %}"  href="#messages" role="tab">
+                        <a class="nav-link {% block nav_item_pagos %}{% endblock %}"  href="{% url 'administracion:mantenedor_empresas_detalle_pagos' pk=empresa.pk %}" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-money-check"></i></span>
                             <span class="d-none d-sm-block">Pagos</span>
                         </a>

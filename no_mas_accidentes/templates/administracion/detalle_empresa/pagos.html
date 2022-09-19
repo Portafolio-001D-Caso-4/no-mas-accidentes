@@ -1,0 +1,49 @@
+{% extends 'administracion/detalle_empresa/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+{% block nav_item_pagos %}active{% endblock %}
+{% block detalle_empresa_body %}
+<div class="col-lg-12 mt-5">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle table-nowrap table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" style="width: 70px;">#</th>
+                        <th scope="col">FECHA PAGO</th>
+                        <th scope="col">¿PAGADO?</th>
+                        <th scope="col">TOTAL</th>
+                        <th scope="col">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for factura_mensual in page_obj %}
+                    <tr>
+                        <td>{{ factura_mensual.id }}</td>
+                        <td> {{ factura_mensual.expiracion|date:"SHORT_DATE_FORMAT" }}</td>
+                        <td>
+                            {% if factura_mensual.es_pagado %}
+                               <p class="badge badge-soft-primary font-size-11 m-1">SI</p>
+                            {% else %}
+                                <p class="badge badge-soft-danger font-size-11 m-1">NO</p>
+                            {% endif %}
+                        </td>
+                        <td><p class="badge badge-soft-primary font-size-11 m-1">${{ factura_mensual.total|intcomma }}</p></td>
+                        <td>
+                            <ul class="list-inline font-size-20 contact-links mb-0">
+                                {% if not factura_mensual.es_pagado %}
+                                <li class="list-inline-item px-2">
+                                    <a href="{% url 'administracion:enviar_recordatorio_no_pago' pk=empresa.pk factura_mensual_id=factura_mensual.id %}" title="Enviar recordatorio"><i class="bx bxs-envelope"></i></a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+</div>
+{% endblock %}
