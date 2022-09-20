@@ -36,3 +36,35 @@ def traer_context_data_de_servicios_por_empresa(
         }
         for servicio in servicios
     ]
+
+
+def traer_servicios_por_profesional(id_profesional: int) -> QuerySet[Servicio]:
+    return Servicio.objects.filter(profesional_id=id_profesional).exclude(
+        tipo=TiposDeServicio.LLAMADA
+    )
+
+
+def traer_context_data_de_servicios_por_profesional(
+    id_profesional: int,
+) -> list[dict[str, Any]]:
+    servicios = traer_servicios_por_profesional(id_profesional=id_profesional)
+    return [
+        {
+            "title": servicio.tipo,
+            "month": servicio.agendado_para.month,
+            "day": servicio.agendado_para.day,
+            "year": servicio.agendado_para.year,
+            "start_hour": servicio.agendado_para.hour,
+            "start_min": servicio.agendado_para.minute,
+            "start_second": servicio.agendado_para.second,
+            "end_hour": (servicio.agendado_para + servicio.duracion).hour,
+            "end_min": (servicio.agendado_para + servicio.duracion).minute,
+            "end_second": (servicio.agendado_para + servicio.duracion).second,
+            "all_day": False,
+            "class_name": "bg-warning",
+            "url": "#",
+            "profesional_asignado": servicio.profesional.usuario.name,
+            "empresa": servicio.empresa.nombre,
+        }
+        for servicio in servicios
+    ]
