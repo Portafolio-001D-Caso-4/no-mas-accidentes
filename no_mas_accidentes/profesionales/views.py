@@ -2,6 +2,7 @@ import arrow
 from django.db.models import Count
 from django.views.generic import TemplateView
 
+from no_mas_accidentes.clientes.models import Empresa
 from no_mas_accidentes.profesionales.constants import app_name
 from no_mas_accidentes.profesionales.mixins import EsProfesionalMixin
 from no_mas_accidentes.servicios.business_logic import (
@@ -46,6 +47,9 @@ class Home(EsProfesionalMixin, TemplateView):
         ] = business_logic_servicios.traer_context_data_de_servicios_por_profesional(
             id_profesional=self.request.user.pk
         )
+        context["num_empresas_asignadas"] = Empresa.objects.filter(
+            profesional_asignado_id=self.request.user.pk
+        ).count()
         return context
 
 
