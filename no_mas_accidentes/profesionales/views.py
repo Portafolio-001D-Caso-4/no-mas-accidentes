@@ -10,7 +10,7 @@ from no_mas_accidentes.profesionales.mixins import EsProfesionalMixin
 from no_mas_accidentes.servicios.business_logic import (
     servicios as business_logic_servicios,
 )
-from no_mas_accidentes.servicios.constants import TiposDeServicio
+from no_mas_accidentes.servicios.constants import TIPOS_DE_SERVICIOS, TiposDeServicio
 from no_mas_accidentes.servicios.models import Servicio
 
 
@@ -96,3 +96,62 @@ class DetalleEmpresaInformacionView(EsProfesionalMixin, DetailView):
 home_view = Home.as_view()
 lista_empresas_asignadas_view = ListaEmpresasAsignadasView.as_view()
 detalle_empresa_informacion_view = DetalleEmpresaInformacionView.as_view()
+
+
+class Empresas:
+    pass
+
+
+class ListaServiciosAsignadosView(EsProfesionalMixin, ListView):
+    queryset = Servicio.objects.all()
+    fields = "__all__"
+    success_url = reverse_lazy(f"{app_name}:servicios_asignados_lista")
+    ordering = "-agendado_para"
+    paginate_by = 10
+    template_name = f"{app_name}/lista_servicios_asignados.html"
+
+    def get_queryset(self):
+        filtro_rut = self.request.GET.get("filtro_rut")
+        filtro_empresa_seleccionada = self.request.GET.get(
+            "filtro_empresa_seleccionada"
+        )
+        filtro_tipo_seleccionado = self.request.GET.get("filtro_tipo_seleccionado")
+        filtro_es_realizado = self.request.GET.get("filtro_es_realizado")
+        queryset = self.queryset.order_by(self.ordering)
+        # solo puede ver sus servicios asignadas
+        queryset = queryset.filter(profesional_id=self.request.user.pk)
+        if filtro_rut:
+            rut_a_buscar = str(filtro_rut).upper()
+            queryset = queryset.filter(rut=rut_a_buscar)
+        if filtro_empresa_seleccionada:
+            queryset = queryset.filter(empresa_id=int(filtro_empresa_seleccionada))
+        if filtro_tipo_seleccionado:
+            queryset = queryset.filter(tipo=filtro_tipo_seleccionado)
+        if filtro_es_realizado == "PENDIENTE":
+            queryset = queryset.filter(realizado_en__isnull=True)
+        elif filtro_es_realizado == "REALIZADA":
+            queryset = queryset.filter(realizado_en__isnull=False)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filtro_rut"] = self.request.GET.get("filtro_rut", "")
+        context["filtro_tipo_seleccionado"] = self.request.GET.get(
+            "filtro_tipo_seleccionado", ""
+        )
+        context["filtro_es_realizado"] = self.request.GET.get("filtro_es_realizado", "")
+        # solo puede ver sus empresas asignadas
+        context["filtro_tipos"] = TIPOS_DE_SERVICIOS
+        context["filtro_empresas"] = Empresa.objects.filter(
+            profesional_asignado_id=self.request.user.pk
+        )
+        filtro_empresa_seleccionada = self.request.GET.get(
+            "filtro_empresa_seleccionada", ""
+        )
+        context["filtro_empresa_seleccionada"] = (
+            int(filtro_empresa_seleccionada) if filtro_empresa_seleccionada else ""
+        )
+        return context
+
+
+lista_servicios_asignados_view = ListaServiciosAsignadosView.as_view()

@@ -1,0 +1,138 @@
+{% extends 'profesionales/base.html' %}
+
+{% load static %}
+
+{% block contents %}
+<div class="row">
+    <div class="col-lg-12">
+      <div class="row mb-2">
+            <div class="col-sm-12">
+                  <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                      <h4 class="mb-sm-0 font-size-18">Actividades asignadas</h4>
+                  </div>
+            </div><!-- end col-->
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-4">
+                <form method="get" action="{% url 'profesionales:servicios_asignados_lista' %}">
+                    <div class="search-box me-2 mb-2 d-inline-block">
+                        <div class="position-relative">
+                            <input name="filtro_rut" type="text" class="form-control" value="{{filtro_rut}}" placeholder="Ingrese rut a buscar">
+                            <i class="bx bx-search-alt search-icon"></i>
+                        </div>
+                    </div>
+                    <input class="btn btn-primary waves-effect waves-light" type="submit" name="submit" value="Buscar"/>
+                </form>
+            </div>
+            <div class="col-sm-4">
+                <form method="get" action="{% url 'profesionales:servicios_asignados_lista' %}">
+                    <div class="search-box me-2 mb-2 d-inline-block">
+                        <div class="position-relative">
+                            <select class="form-select" name="filtro_empresa_seleccionada">
+                                <option value="" selected>Seleccione empresa a buscar</option>
+                                {% for empresa in filtro_empresas %}
+                                <option value="{{ empresa.id }}" {% if empresa.id == filtro_empresa_seleccionada %}selected{% endif %}>{{ empresa }}</option>
+                                {% endfor %}
+                            </select>
+<!--                            <i class="bx bx-search-alt search-icon"></i>-->
+                        </div>
+                    </div>
+                    <input class="btn btn-primary waves-effect waves-light" type="submit" name="submit" value="Buscar"/>
+                </form>
+            </div>
+            <div class="col-sm-4">
+                <form method="get" action="{% url 'profesionales:servicios_asignados_lista' %}">
+                    <div class="search-box me-2 mb-2 d-inline-block">
+                        <div class="position-relative">
+                            <select class="form-select" name="filtro_tipo_seleccionado">
+                                <option value="" selected>Seleccione tipo a buscar</option>
+                                {% for tipo in filtro_tipos %}
+                                <option value="{{ tipo }}" {% if tipo == filtro_tipo_seleccionado %}selected{% endif %}>{{ tipo }}</option>
+                                {% endfor %}
+                            </select>
+<!--                            <i class="bx bx-search-alt search-icon"></i>-->
+                        </div>
+                    </div>
+                    <input class="btn btn-primary waves-effect waves-light" type="submit" name="submit" value="Buscar"/>
+                </form>
+            </div>
+        </div>
+      <div class="row mb-2">
+            <div class="col-sm-4">
+                <form method="get" action="{% url 'profesionales:servicios_asignados_lista' %}">
+                    <div class="search-box me-2 mb-2 d-inline-block">
+                        <div class="position-relative">
+                            <select class="form-select" name="filtro_es_realizado">
+                                <option value="" selected>Seleccione estado a buscar</option>
+                                <option value="PENDIENTE" {% if 'PENDIENTE' == filtro_es_realizado %}selected{% endif %}>PENDIENTE</option>
+                                <option value="REALIZADA" {% if 'REALIZADA' == filtro_es_realizado %}selected{% endif %}>REALIZADA</option>
+                            </select>
+<!--                            <i class="bx bx-search-alt search-icon"></i>-->
+                        </div>
+                    </div>
+                    <input class="btn btn-primary waves-effect waves-light" type="submit" name="submit" value="Buscar"/>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 70px;">#</th>
+                                <th scope="col">AGENDADO PARA</th>
+                                <th scope="col">TIPO</th>
+                                <th scope="col">EMPRESA</th>
+                                <th scope="col">PROFESIONAL</th>
+                                <th scope="col">REALIZADO EN</th>
+                                <th scope="col">DURACION</th>
+                                <th scope="col">ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for servicio in page_obj %}
+                            <tr>
+                                <td>{{ servicio.id }}</td>
+                                <td>{{ servicio.agendado_para|date:"SHORT_DATETIME_FORMAT" }}</td>
+                                <td>{{ servicio.tipo }}</td>
+                                <td>{{ servicio.empresa }}</td>
+                                <td>{{ servicio.profesional }}</td>
+                                <td>{{ servicio.realizado_en|date:"SHORT_DATETIME_FORMAT" }}</td>
+                                <td>{{ servicio.duracion }}</td>
+                                <td>
+                                    <ul class="list-inline font-size-20 contact-links mb-0">
+                                        <li class="list-inline-item px-2">
+                                            <a href="{% url 'profesionales:empresas_asignadas_detalle_informacion' pk=1 %}" title="Detalles"><i class="bx bx bxs-business"></i></a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="pagination justify-content-center mt-4">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a href="?page={{ page_obj.previous_page_number }}" class="page-link"><i class="mdi mdi-chevron-left"></i></a>
+                            </li>
+                            {% endif %}
+                            <li class="page-item">
+                                <a class="page-link">{{ page_obj.number }} de {{page_obj.paginator.num_pages }}</a>
+                            </li>
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a href="?page={{ page_obj.next_page_number }}" class="page-link"><i class="mdi mdi-chevron-right"></i></a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

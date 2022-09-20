@@ -13,6 +13,13 @@ duracion_en_hrs_por_servicio = {
     TiposDeServicio.VISITA: 2,
 }
 
+TIPOS_DE_SERVICIOS = (
+    TiposDeServicio.ASESORIA_EMERGENCIA,
+    TiposDeServicio.ASESORIA_FISCALIZACION,
+    TiposDeServicio.CAPACITACION,
+    TiposDeServicio.VISITA,
+    TiposDeServicio.LLAMADA,
+)
 
 OPCIONES_DE_SERVICIOS = [
     (

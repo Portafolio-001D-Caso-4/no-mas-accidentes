@@ -4,6 +4,7 @@ from no_mas_accidentes.profesionales.views import (
     detalle_empresa_informacion_view,
     home_view,
     lista_empresas_asignadas_view,
+    lista_servicios_asignados_view,
 )
 
 app_name = "profesionales"
@@ -18,5 +19,10 @@ urlpatterns = [
         "empresas-asignadas/<int:pk>/informacion",
         view=detalle_empresa_informacion_view,
         name="empresas_asignadas_detalle_informacion",
+    ),
+    path(
+        "servicios/lista",
+        view=lista_servicios_asignados_view,
+        name="servicios_asignados_lista",
     ),
 ]
