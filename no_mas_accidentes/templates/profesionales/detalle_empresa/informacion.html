@@ -1,0 +1,34 @@
+{% extends 'profesionales/detalle_empresa/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block nav_item_informacion %}active{% endblock %}
+{% block detalle_empresa_body %}
+<div class="card-body col-lg-12 mt-5">
+    <form action="" method="post">
+        {% csrf_token %}
+
+        {% for error in form.non_field_errors %}
+            {{ error }}
+        {% endfor %}
+
+        <div class="row">
+            <div class="col-lg-4">
+            {% for field in form %}
+                 <div class="mb-3">
+                    <div>{{ field|as_crispy_field }}</div>
+                </div>
+                {% if forloop.last %}
+                   </div>
+                {% else %}
+                   {% if forloop.counter|divisibleby:"2" %}
+                    </div>
+                    <div class="col-lg-4">
+                   {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    </form>
+</div>
+{% endblock %}
