@@ -1,10 +1,11 @@
 import arrow
 from django.db.models import Count
 from django.urls import reverse_lazy
-from django.views.generic import ListView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView
 
 from no_mas_accidentes.clientes.models import Empresa
 from no_mas_accidentes.profesionales.constants import app_name
+from no_mas_accidentes.profesionales.forms import DetalleEmpresaForm
 from no_mas_accidentes.profesionales.mixins import EsProfesionalMixin
 from no_mas_accidentes.servicios.business_logic import (
     servicios as business_logic_servicios,
@@ -78,5 +79,20 @@ class ListaEmpresasAsignadasView(EsProfesionalMixin, ListView):
         return context
 
 
+class DetalleEmpresaInformacionView(EsProfesionalMixin, DetailView):
+    template_name = f"{app_name}/detalle_empresa/informacion.html"
+    queryset = Empresa.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(profesional_asignado_id=self.request.user.pk)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["empresa"] = self.object
+        context["form"] = DetalleEmpresaForm(instance=self.object)
+        return context
+
+
 home_view = Home.as_view()
 lista_empresas_asignadas_view = ListaEmpresasAsignadasView.as_view()
+detalle_empresa_informacion_view = DetalleEmpresaInformacionView.as_view()
