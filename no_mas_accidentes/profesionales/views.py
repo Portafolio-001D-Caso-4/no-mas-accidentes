@@ -1,6 +1,7 @@
 import arrow
 from django.db.models import Count
-from django.views.generic import TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, TemplateView
 
 from no_mas_accidentes.clientes.models import Empresa
 from no_mas_accidentes.profesionales.constants import app_name
@@ -53,4 +54,29 @@ class Home(EsProfesionalMixin, TemplateView):
         return context
 
 
+class ListaEmpresasAsignadasView(EsProfesionalMixin, ListView):
+    queryset = Empresa.objects.all()
+    fields = "__all__"
+    success_url = reverse_lazy(f"{app_name}:empresas_asignadas_lista")
+    ordering = "id"
+    paginate_by = 10
+    template_name = f"{app_name}/lista_empresas_asignadas.html"
+
+    def get_queryset(self):
+        filtro_rut = self.request.GET.get("filtro_rut")
+        queryset = self.queryset.order_by(self.ordering)
+        # solo puede ver sus empresas asignadas
+        queryset = queryset.filter(profesional_asignado_id=self.request.user.pk)
+        if filtro_rut:
+            rut_a_buscar = str(filtro_rut).upper()
+            queryset = queryset.filter(rut=rut_a_buscar)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filtro_rut"] = self.request.GET.get("filtro_rut", "")
+        return context
+
+
 home_view = Home.as_view()
+lista_empresas_asignadas_view = ListaEmpresasAsignadasView.as_view()
