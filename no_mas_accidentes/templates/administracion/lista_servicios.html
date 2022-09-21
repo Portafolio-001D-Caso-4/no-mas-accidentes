@@ -1,4 +1,4 @@
-{% extends 'profesionales/base.html' %}
+{% extends 'administracion/base.html' %}
 
 {% load static %}
 
@@ -8,13 +8,13 @@
       <div class="row mb-2">
             <div class="col-sm-12">
                   <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                      <h4 class="mb-sm-0 font-size-18">Actividades asignadas</h4>
+                      <h4 class="mb-sm-0 font-size-18">Actividades</h4>
                   </div>
             </div><!-- end col-->
         </div>
         <div class="row mb-2">
             <div class="col-sm-4">
-                <form method="get" action="{% url 'profesionales:servicios_asignados_lista' %}">
+                <form method="get" action="{% url 'administracion:servicios_lista' %}">
                     <div class="search-box me-2 mb-2 d-inline-block">
                         <div class="position-relative">
                             <input name="filtro_rut" type="text" class="form-control" value="{{filtro_rut}}" placeholder="Ingrese rut a buscar">
@@ -25,7 +25,7 @@
                 </form>
             </div>
             <div class="col-sm-4">
-                <form method="get" action="{% url 'profesionales:servicios_asignados_lista' %}">
+                <form method="get" action="{% url 'administracion:servicios_lista' %}">
                     <div class="search-box me-2 mb-2 d-inline-block">
                         <div class="position-relative">
                             <select class="form-select" name="filtro_empresa_seleccionada">
@@ -41,7 +41,7 @@
                 </form>
             </div>
             <div class="col-sm-4">
-                <form method="get" action="{% url 'profesionales:servicios_asignados_lista' %}">
+                <form method="get" action="{% url 'administracion:servicios_lista' %}">
                     <div class="search-box me-2 mb-2 d-inline-block">
                         <div class="position-relative">
                             <select class="form-select" name="filtro_tipo_seleccionado">
@@ -59,7 +59,7 @@
         </div>
       <div class="row mb-2">
             <div class="col-sm-4">
-                <form method="get" action="{% url 'profesionales:servicios_asignados_lista' %}">
+                <form method="get" action="{% url 'administracion:servicios_lista' %}">
                     <div class="search-box me-2 mb-2 d-inline-block">
                         <div class="position-relative">
                             <select class="form-select" name="filtro_es_realizado">
@@ -103,7 +103,7 @@
                                 <td>
                                     <ul class="list-inline font-size-20 contact-links mb-0">
                                         <li class="list-inline-item px-2">
-                                            <a href="{% url 'profesionales:empresas_asignadas_detalle_informacion' pk=servicio.empresa.pk %}" title="Ver empresa"><i class="bx bx bxs-business"></i></a>
+                                            <a href="{% url 'administracion:mantenedor_empresas_detalle_informacion' pk=servicio.empresa.pk %}" title="Ver empresa"><i class="bx bx bxs-business"></i></a>
                                         </li>
                                     </ul>
                                 </td>

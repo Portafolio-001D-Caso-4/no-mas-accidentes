@@ -31,7 +31,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_item_actividades %}{% endblock %}" href="#settings" role="tab">
+                        <a class="nav-link {% block nav_item_actividades %}{% endblock %}" href="{% url 'administracion:servicios_lista' %}?filtro_empresa_seleccionada={{ empresa.pk }}" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-chalkboard-teacher"></i></span>
                             <span class="d-none d-sm-block">Actividades</span>
                         </a>
