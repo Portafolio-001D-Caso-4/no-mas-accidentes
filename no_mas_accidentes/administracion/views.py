@@ -39,6 +39,8 @@ from no_mas_accidentes.administracion.mixins import (
 from no_mas_accidentes.administracion.tasks import enviar_recordatorio_no_pago
 from no_mas_accidentes.clientes.models import Contrato, Empresa, FacturaMensual
 from no_mas_accidentes.profesionales.models import Profesional
+from no_mas_accidentes.servicios.constants import TIPOS_DE_SERVICIOS
+from no_mas_accidentes.servicios.models import Servicio
 from no_mas_accidentes.users.models import User
 
 
@@ -324,6 +326,57 @@ detalle_empresa_contratos_view = DetalleEmpresaContratosView.as_view()
 detalle_empresa_contrato_view = DetalleEmpresaContratoView.as_view()
 detalle_empresa_pagos_view = DetalleEmpresaPagosView.as_view()
 detalle_empresa_pago_view = DetalleEmpresaPagoView.as_view()
+
+
+class ListaServiciosView(EsAdministradorMixin, ListView):
+    queryset = Servicio.objects.all()
+    fields = "__all__"
+    success_url = reverse_lazy(f"{app_name}:servicios_lista")
+    ordering = "-agendado_para"
+    paginate_by = 10
+    template_name = f"{app_name}/lista_servicios.html"
+
+    def get_queryset(self):
+        filtro_rut = self.request.GET.get("filtro_rut")
+        filtro_empresa_seleccionada = self.request.GET.get(
+            "filtro_empresa_seleccionada"
+        )
+        filtro_tipo_seleccionado = self.request.GET.get("filtro_tipo_seleccionado")
+        filtro_es_realizado = self.request.GET.get("filtro_es_realizado")
+        queryset = self.queryset.order_by(self.ordering)
+        if filtro_rut:
+            rut_a_buscar = str(filtro_rut).upper()
+            queryset = queryset.filter(rut=rut_a_buscar)
+        if filtro_empresa_seleccionada:
+            queryset = queryset.filter(empresa_id=int(filtro_empresa_seleccionada))
+        if filtro_tipo_seleccionado:
+            queryset = queryset.filter(tipo=filtro_tipo_seleccionado)
+        if filtro_es_realizado == "PENDIENTE":
+            queryset = queryset.filter(realizado_en__isnull=True)
+        elif filtro_es_realizado == "REALIZADA":
+            queryset = queryset.filter(realizado_en__isnull=False)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filtro_rut"] = self.request.GET.get("filtro_rut", "")
+        context["filtro_tipo_seleccionado"] = self.request.GET.get(
+            "filtro_tipo_seleccionado", ""
+        )
+        context["filtro_es_realizado"] = self.request.GET.get("filtro_es_realizado", "")
+        # solo puede ver sus empresas asignadas
+        context["filtro_tipos"] = TIPOS_DE_SERVICIOS
+        context["filtro_empresas"] = Empresa.objects.all()
+        filtro_empresa_seleccionada = self.request.GET.get(
+            "filtro_empresa_seleccionada", ""
+        )
+        context["filtro_empresa_seleccionada"] = (
+            int(filtro_empresa_seleccionada) if filtro_empresa_seleccionada else ""
+        )
+        return context
+
+
+lista_servicios_view = ListaServiciosView.as_view()
 
 
 @login_required

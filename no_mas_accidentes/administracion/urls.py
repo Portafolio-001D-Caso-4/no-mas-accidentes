@@ -17,6 +17,7 @@ from no_mas_accidentes.administracion.views import (
     lista_clientes_view,
     lista_empresas_view,
     lista_profesionales_view,
+    lista_servicios_view,
 )
 
 app_name = "administracion"
@@ -86,6 +87,11 @@ urlpatterns = [
         "mantenedor-empresas/<int:pk>/pagos/<int:factura_mensual_id>",
         view=detalle_empresa_pago_view,
         name="mantenedor_empresas_detalle_pago",
+    ),
+    path(
+        "servicios/lista",
+        view=lista_servicios_view,
+        name="servicios_lista",
     ),
     path(
         "contratos/<int:pk>/descarga_base",
