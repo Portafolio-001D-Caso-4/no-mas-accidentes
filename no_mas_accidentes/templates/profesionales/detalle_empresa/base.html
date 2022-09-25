@@ -24,6 +24,12 @@
                             <span class="d-none d-sm-block">Actividades</span>
                         </a>
                     </li>
+                  <li class="nav-item">
+                        <a class="nav-link {% block nav_item_checklist_base %}{% endblock %}" href="{% url 'profesionales:empresas_asignadas_crear_o_actualizar_checklist_base' pk=empresa.pk %}" role="tab">
+                            <span class="d-block d-sm-none"><i class="bx bx-list-check"></i></span>
+                            <span class="d-none d-sm-block">Checklist base</span>
+                        </a>
+                    </li>
                 </ul>
                 {% block detalle_empresa_body %}
                 {% endblock %}
