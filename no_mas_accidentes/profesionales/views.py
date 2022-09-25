@@ -1,5 +1,6 @@
 import arrow
 from django.db.models import Count
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView
 
@@ -11,7 +12,8 @@ from no_mas_accidentes.servicios.business_logic import (
     servicios as business_logic_servicios,
 )
 from no_mas_accidentes.servicios.constants import TIPOS_DE_SERVICIOS, TiposDeServicio
-from no_mas_accidentes.servicios.models import Servicio
+from no_mas_accidentes.servicios.forms import CrearOActualizarChecklistBaseForm
+from no_mas_accidentes.servicios.models import ChecklistBase, Servicio
 
 
 class Home(EsProfesionalMixin, TemplateView):
@@ -98,10 +100,6 @@ lista_empresas_asignadas_view = ListaEmpresasAsignadasView.as_view()
 detalle_empresa_informacion_view = DetalleEmpresaInformacionView.as_view()
 
 
-class Empresas:
-    pass
-
-
 class ListaServiciosAsignadosView(EsProfesionalMixin, ListView):
     queryset = Servicio.objects.all()
     fields = "__all__"
@@ -155,3 +153,45 @@ class ListaServiciosAsignadosView(EsProfesionalMixin, ListView):
 
 
 lista_servicios_asignados_view = ListaServiciosAsignadosView.as_view()
+
+
+def crear_o_actualizar_checklist_base_view(request, pk: int):
+    try:
+        checklist: ChecklistBase = ChecklistBase.objects.get(empresa_id=pk)
+        item_por_id = {
+            f"item_{index}": item for index, item in enumerate(checklist.items, start=1)
+        }
+        data_inicial = {"numero_de_items": len(checklist.items), **item_por_id}
+    except ChecklistBase.DoesNotExist:
+        checklist = None
+        data_inicial = {}
+
+    if request.method == "POST":
+        if data_inicial:
+            # update
+            form = CrearOActualizarChecklistBaseForm(
+                request.POST,
+                request=request,
+                numero_de_items=request.POST.get("numero_de_items"),
+                id_empresa=pk,
+                initial=data_inicial,
+            )
+        else:
+            # crear
+            form = CrearOActualizarChecklistBaseForm(
+                request.POST,
+                request=request,
+                numero_de_items=request.POST.get("numero_de_items"),
+                id_empresa=pk,
+            )
+        if form.is_valid():
+            form.save()
+    else:
+        form = CrearOActualizarChecklistBaseForm(
+            request=request, id_empresa=pk, initial=data_inicial
+        )
+    return render(
+        request,
+        f"{app_name}/detalle_empresa/checklist/crear_checklist.html",
+        {"form": form, "empresa": Empresa.objects.get(pk=pk)},
+    )
