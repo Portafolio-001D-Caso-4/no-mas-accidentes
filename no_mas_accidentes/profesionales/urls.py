@@ -1,6 +1,7 @@
 from django.urls import path
 
 from no_mas_accidentes.profesionales.views import (
+    crear_o_actualizar_checklist_base_view,
     detalle_empresa_informacion_view,
     home_view,
     lista_empresas_asignadas_view,
@@ -19,6 +20,11 @@ urlpatterns = [
         "empresas-asignadas/<int:pk>/informacion",
         view=detalle_empresa_informacion_view,
         name="empresas_asignadas_detalle_informacion",
+    ),
+    path(
+        "empresas-asignadas/<int:pk>/checklist_base/",
+        view=crear_o_actualizar_checklist_base_view,
+        name="empresas_asignadas_crear_o_actualizar_checklist_base",
     ),
     path(
         "servicios/lista",
