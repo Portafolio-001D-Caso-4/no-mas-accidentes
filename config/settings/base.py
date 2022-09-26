@@ -76,6 +76,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    "user_messages",
 ]
 
 LOCAL_APPS = [
@@ -188,6 +189,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "no_mas_accidentes.users.context_processors.allauth_settings",
+                "user_messages.context_processors.messages",
             ],
         },
     }

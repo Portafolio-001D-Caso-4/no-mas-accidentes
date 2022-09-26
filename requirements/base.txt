@@ -26,3 +26,4 @@ reportlab==3.6.11
 slack-sdk==3.18.3
 arrow==1.2.3
 transbank-sdk==1.5.0
+django-user-messages==1.0.0
