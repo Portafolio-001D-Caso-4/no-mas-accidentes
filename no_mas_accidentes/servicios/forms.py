@@ -4,6 +4,7 @@ from django import forms
 from django.contrib import messages
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+from no_mas_accidentes.clientes.models import FacturaMensual
 from no_mas_accidentes.servicios.models import ChecklistBase
 
 
@@ -58,7 +59,10 @@ class CrearOActualizarChecklistBaseForm(forms.Form):
             messages.success(
                 request=self.request, message="Se ha actualizado el checklist"
             )
-
+            factura_mensual: FacturaMensual = FacturaMensual.objects.last()
+            factura_mensual.agregar_nueva_modificacion_checklist(
+                checklist_base=checklist, generado_por=self.request.user.id
+            )
             checklist.items = items_nuevos
             checklist.save()
         else:
