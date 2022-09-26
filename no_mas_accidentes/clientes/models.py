@@ -6,6 +6,7 @@ from django.core.validators import (
     MinValueValidator,
 )
 from django.db import models
+from user_messages import api as message_user
 
 from no_mas_accidentes.users import validators as users_validators
 
@@ -170,4 +171,81 @@ class FacturaMensual(models.Model):
         return (
             self.num_modificaciones_reporte_extra
             * self.contrato.valor_modificacion_reporte_extra
+        )
+
+    def enviar_alerta_nuevo_cobro(self, mensaje: str, generado_por: int):
+        mensaje_base = "Se ha generado un nuevo servicio: "
+        mensaje_a_enviar = mensaje_base + mensaje
+        for usuario in self.contrato.empresa.user_set.all():
+            message_user.info(usuario, mensaje_a_enviar)
+
+    def agregar_nueva_capacitacion(self, capacitacion, generado_por: int):
+        max_capacitaciones_mensuales = self.contrato.max_capacitaciones_mensuales
+        if self.num_capacitaciones < max_capacitaciones_mensuales:
+            original = self.num_capacitaciones
+            self.enviar_alerta_nuevo_cobro(
+                mensaje=f"Capacitación ({original+1} de {max_capacitaciones_mensuales} gratis)",
+                generado_por=generado_por,
+            )
+        else:
+            original = self.num_capacitaciones_extra
+            self.enviar_alerta_nuevo_cobro(
+                mensaje=f"Capacitación extra (${self.valor_capacitaciones_extra})",
+                generado_por=generado_por,
+            )
+        original += 1
+        self.total += self.valor_capacitaciones_extra
+        self.save()
+
+    def agregar_nueva_visita(self, visita, generado_por: int):
+        max_visitas_mensuales = self.contrato.max_visitas_mensuales
+        if self.num_visitas < max_visitas_mensuales:
+            original = self.num_visitas
+            self.enviar_alerta_nuevo_cobro(
+                mensaje=f"Visita ({original+1} de {max_visitas_mensuales} gratis)",
+                generado_por=generado_por,
+            )
+        else:
+            original = self.num_visitas_extra
+            self.enviar_alerta_nuevo_cobro(
+                mensaje=f"Visita extra (${self.valor_visitas_extra})",
+                generado_por=generado_por,
+            )
+        original += 1
+        self.total += self.valor_visitas_extra
+        self.save()
+
+    def agregar_nueva_asesoria(self, asesoria, generado_por: int):
+        max_asesorias_mensuales = self.contrato.max_asesorias_mensuales
+        if self.num_asesorias < max_asesorias_mensuales:
+            original = self.num_asesorias
+            self.enviar_alerta_nuevo_cobro(
+                mensaje=f"Asesoría ({original+1} de {max_asesorias_mensuales} gratis)",
+                generado_por=generado_por,
+            )
+        else:
+            original = self.num_asesorias_extra
+            self.enviar_alerta_nuevo_cobro(
+                mensaje=f"Asesoría extra (${self.valor_asesorias_extra})",
+                generado_por=generado_por,
+            )
+        original += 1
+        self.total += self.valor_asesorias_extra
+        self.save()
+
+    def agregar_nueva_llamada(self, llamada, generado_por: int):
+        # TODO: hacer logica por horario
+        self.enviar_alerta_nuevo_cobro(mensaje="Llamada", generado_por=generado_por)
+
+    def agregar_nueva_modificacion_checklist(self, checklist_base, generado_por: int):
+        # TODO: hacer logica por año
+        self.enviar_alerta_nuevo_cobro(
+            mensaje="Modificicación checklist", generado_por=generado_por
+        )
+
+    def agregar_nueva_modificacion_reporte(self, generado_por: int):
+        # TODO: hacer logica por año
+
+        self.enviar_alerta_nuevo_cobro(
+            mensaje="Modificicación reporte", generado_por=generado_por
         )
