@@ -44,6 +44,7 @@
                                 <th scope="col">¿ESTÁ ACTIVO?</th>
                                 <th scope="col">CREADO EN</th>
                                 <th scope="col">TELEFONO</th>
+                                <th scope="col">ACCIDENTABILIDAD</th>
                                 <th scope="col">ACCIONES</th>
                             </tr>
                         </thead>
@@ -71,6 +72,9 @@
                                 </td>
                                 <td>
                                     {{ profesional.profesional.telefono }}
+                                </td>
+                                <td>
+                                    {{ profesional.profesional.porcentaje_accidentabilidad_historico }} %
                                 </td>
                                 <td>
                                     <ul class="list-inline font-size-20 contact-links mb-0">
