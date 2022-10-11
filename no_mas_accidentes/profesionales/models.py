@@ -15,6 +15,16 @@ class Profesional(models.Model):
     def __str__(self):
         return f"{self.usuario.rut} - {self.usuario.name}"
 
+    @property
+    def porcentaje_accidentabilidad_historico(self):
+        from no_mas_accidentes.profesionales.business_logic.accidentabilidad import (
+            calcular_accidentabilidad_por_profesional,
+        )
+
+        return calcular_accidentabilidad_por_profesional(
+            profesional_id=self.usuario.pk, historico=True
+        )
+
 
 class HorarioProfesional(models.Model):
     fecha_inicio = models.DateField()

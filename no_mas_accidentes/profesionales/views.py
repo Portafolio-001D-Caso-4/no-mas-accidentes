@@ -5,6 +5,9 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView
 
 from no_mas_accidentes.clientes.models import Empresa
+from no_mas_accidentes.profesionales.business_logic.accidentabilidad import (
+    calcular_accidentabilidad_por_profesional,
+)
 from no_mas_accidentes.profesionales.constants import app_name
 from no_mas_accidentes.profesionales.forms import DetalleEmpresaForm
 from no_mas_accidentes.profesionales.mixins import EsProfesionalMixin
@@ -22,7 +25,7 @@ class Home(EsProfesionalMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         mes_actual = arrow.utcnow().datetime.month
-        num_servicios_por_tipo = (
+        num_servicios_por_tipo = list(
             Servicio.objects.filter(
                 profesional__usuario=self.request.user, realizado_en__month=mes_actual
             )
@@ -30,22 +33,40 @@ class Home(EsProfesionalMixin, TemplateView):
             .order_by("tipo")
             .annotate(num_servicios=Count("tipo"))
         )
-        num_servicios_por_tipo = {
-            servicio_por_tipo["tipo"]: servicio_por_tipo["num_servicios"]
-            for servicio_por_tipo in num_servicios_por_tipo
-        }
-        context["num_visitas"] = num_servicios_por_tipo.get(TiposDeServicio.VISITA, 0)
-        context["num_capacitaciones"] = num_servicios_por_tipo.get(
-            TiposDeServicio.CAPACITACION, 0
+        context["num_visitas"] = sum(
+            servicio["num_servicios"]
+            for servicio in num_servicios_por_tipo
+            if servicio["tipo"] == TiposDeServicio.VISITA
         )
-        context["num_asesorias"] = num_servicios_por_tipo.get(
-            TiposDeServicio.ASESORIA_EMERGENCIA, 0
-        ) + num_servicios_por_tipo.get(TiposDeServicio.ASESORIA_FISCALIZACION, 0)
-        context["num_llamadas"] = num_servicios_por_tipo.get(TiposDeServicio.LLAMADA, 0)
-        context["num_accidentes"] = num_servicios_por_tipo.get(
-            TiposDeServicio.ASESORIA_EMERGENCIA, 0
+        context["num_capacitaciones"] = sum(
+            servicio["num_servicios"]
+            for servicio in num_servicios_por_tipo
+            if servicio["tipo"] == TiposDeServicio.CAPACITACION
         )
-        context["porcentaje_accidentabilidad"] = 20  # TODO: Calcular esto
+        context["num_asesorias"] = sum(
+            servicio["num_servicios"]
+            for servicio in num_servicios_por_tipo
+            if servicio["tipo"]
+            in (
+                TiposDeServicio.ASESORIA_EMERGENCIA,
+                TiposDeServicio.ASESORIA_FISCALIZACION,
+            )
+        )
+        context["num_llamadas"] = sum(
+            servicio["num_servicios"]
+            for servicio in num_servicios_por_tipo
+            if servicio["tipo"] == TiposDeServicio.LLAMADA
+        )
+        context["num_accidentes"] = sum(
+            servicio["num_servicios"]
+            for servicio in num_servicios_por_tipo
+            if servicio["tipo"] == TiposDeServicio.ASESORIA_EMERGENCIA
+        )
+        context[
+            "porcentaje_accidentabilidad"
+        ] = calcular_accidentabilidad_por_profesional(
+            profesional_id=self.request.user.pk
+        )
         context[
             "agendas"
         ] = business_logic_servicios.traer_context_data_de_servicios_por_profesional(
