@@ -16,6 +16,9 @@ from no_mas_accidentes.clientes.business_logic.pagos import realizar_pago_ultima
 from no_mas_accidentes.clientes.constants import app_name
 from no_mas_accidentes.clientes.mixins import EsClienteMixin, EsClienteYAdeudadoMixin
 from no_mas_accidentes.clientes.models import FacturaMensual
+from no_mas_accidentes.servicios.business_logic.reportes import (
+    traer_informacion_reporte_cliente,
+)
 from no_mas_accidentes.servicios.business_logic.servicios import (
     traer_context_data_de_servicios_por_empresa,
 )
@@ -147,3 +150,27 @@ empresa_adeudada_view = EmpresaAdeudadaView.as_view()
 realizar_pago_view = RealizarPagoView.as_view()
 recepcion_transaccion_view = RecepcionTransaccionView.as_view()
 transaccion_exitosa_view = TransaccionExitosaView.as_view()
+
+
+class ReporteClienteView(EsClienteMixin, TemplateView):
+    template_name = f"{app_name}/reporte.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["informacion_empresa"] = INFORMACION_EMPRESA_PREVENCION_CHILE
+        context["empresa"] = self.request.user.empresa
+
+        (
+            context["servicios"],
+            context["fecha_hasta"],
+        ) = traer_informacion_reporte_cliente(empresa_id=self.request.user.empresa.id)
+        facturas_mensuales: FacturaMensual = (
+            FacturaMensual.objects.filter(contrato__empresa=context["empresa"])
+            .order_by("expiracion")
+            .all()
+        )
+        context["facturas_mensuales"] = facturas_mensuales
+        return context
+
+
+reporte_cliente_view = ReporteClienteView.as_view()
