@@ -5,6 +5,7 @@ from no_mas_accidentes.clientes.views import (
     home_view,
     realizar_pago_view,
     recepcion_transaccion_view,
+    reporte_cliente_view,
     transaccion_exitosa_view,
 )
 
@@ -23,4 +24,5 @@ urlpatterns = [
         view=recepcion_transaccion_view,
         name="recepcion_transaccion",
     ),
+    path("reporte-historico/", view=reporte_cliente_view, name="reporte_cliente_view"),
 ]

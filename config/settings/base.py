@@ -339,3 +339,4 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 SLACK_TOKEN = env("SLACK_TOKEN", default="")
+REDIS_URL = env("REDIS_URL")
