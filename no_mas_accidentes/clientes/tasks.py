@@ -1,14 +1,19 @@
 from django.conf import settings
 
 from config import celery_app
+from no_mas_accidentes.servicios.models import Evento
 from no_mas_accidentes.utils.slack import SlackMessage, SlackWebClient
 
 
 @celery_app.task()
-def enviar_alerta():
+def enviar_alerta_accidente(id_evento: int):
+    evento: Evento = Evento.objects.get(id=id_evento)
     cliente = SlackWebClient(token=settings.SLACK_TOKEN)
     mensaje = SlackMessage()
-    titulo = "Se ha generado un nuevo accidente, por favor revisar inmediatamente"
+    titulo = (
+        f"Se ha generado un nuevo accidente en la empresa "
+        f"{evento.servicio.empresa.nombre}, por favor revisar inmediatamente"
+    )
     mensaje.generar_titulo(mensaje=titulo)
     mensaje.generar_link(url="google.com", mensaje="Ver alerta en sitio web")
     contenido_a_enviar = mensaje.generar_mensaje_a_enviar()

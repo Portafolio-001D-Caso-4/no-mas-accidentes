@@ -1,15 +1,20 @@
 import arrow
+from django.contrib import messages
 from django.db.models import Count
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView, UpdateView
 
 from no_mas_accidentes.clientes.models import Empresa
 from no_mas_accidentes.profesionales.business_logic.accidentabilidad import (
     calcular_accidentabilidad_por_profesional,
 )
 from no_mas_accidentes.profesionales.constants import app_name
-from no_mas_accidentes.profesionales.forms import DetalleEmpresaForm
+from no_mas_accidentes.profesionales.forms import (
+    ActualizarAsesoriaEmergenciaForm,
+    DetalleEmpresaForm,
+)
 from no_mas_accidentes.profesionales.mixins import EsProfesionalMixin
 from no_mas_accidentes.servicios.business_logic import (
     servicios as business_logic_servicios,
@@ -75,6 +80,11 @@ class Home(EsProfesionalMixin, TemplateView):
         context["num_empresas_asignadas"] = Empresa.objects.filter(
             profesional_asignado_id=self.request.user.pk
         ).count()
+        context["servicio_en_progreso"] = Servicio.objects.filter(
+            profesional=self.request.user.pk,
+            agendado_para__lte=arrow.utcnow().datetime,
+            realizado_en__isnull=True,
+        ).first()
         return context
 
 
@@ -216,3 +226,37 @@ def crear_o_actualizar_checklist_base_view(request, pk: int):
         f"{app_name}/detalle_empresa/checklist/crear_checklist.html",
         {"form": form, "empresa": Empresa.objects.get(pk=pk)},
     )
+
+
+class ActualizarAsesoriaEmergenciaView(EsProfesionalMixin, UpdateView):
+    template_name = f"{app_name}/asesoria_emergencia/actualizar.html"
+    form_class = ActualizarAsesoriaEmergenciaForm
+    queryset = Servicio.objects.filter(tipo=TiposDeServicio.ASESORIA_EMERGENCIA)
+
+    def get_success_message(self):
+        return f"Asesoría de emergencia {self.object.id} actualizada satisfactoriamente"
+
+    def form_valid(self, form):
+        form.save()
+        if form.terminado:
+            messages.success(
+                self.request,
+                f"Asesoría de emergencia {self.object.id} finalizada satisfactoriamente",
+            )
+            return HttpResponseRedirect(reverse_lazy(f"{app_name}:home"))
+        messages.success(self.request, self.get_success_message())
+        return HttpResponseRedirect(
+            reverse_lazy(
+                f"{app_name}:asesoria_emergencia_actualizar",
+                kwargs={"pk": self.object.pk},
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["empresa"] = self.object
+        context["accidente"] = self.object.evento_set.first()
+        return context
+
+
+actualizar_asesoria_emergencia_view = ActualizarAsesoriaEmergenciaView.as_view()

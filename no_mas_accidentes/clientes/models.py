@@ -9,6 +9,7 @@ from django.db import models
 from user_messages import api as message_user
 
 from no_mas_accidentes.users import validators as users_validators
+from no_mas_accidentes.users.models import User
 
 
 class Empresa(models.Model):
@@ -176,6 +177,10 @@ class FacturaMensual(models.Model):
     def enviar_alerta_nuevo_cobro(self, mensaje: str, generado_por: int):
         mensaje_base = "Se ha generado un nuevo servicio: "
         mensaje_a_enviar = mensaje_base + mensaje
+        if generado_por:
+            mensaje_a_enviar += (
+                f" Solicitado por {User.objects.get(id=generado_por).name}"
+            )
         for usuario in self.contrato.empresa.user_set.all():
             message_user.info(usuario, mensaje_a_enviar)
 
@@ -200,36 +205,34 @@ class FacturaMensual(models.Model):
     def agregar_nueva_visita(self, visita, generado_por: int):
         max_visitas_mensuales = self.contrato.max_visitas_mensuales
         if self.num_visitas < max_visitas_mensuales:
-            original = self.num_visitas
+            self.num_visitas += 1
             self.enviar_alerta_nuevo_cobro(
-                mensaje=f"Visita ({original+1} de {max_visitas_mensuales} gratis)",
+                mensaje=f"Visita ({self.num_visitas} de {max_visitas_mensuales} gratis)",
                 generado_por=generado_por,
             )
         else:
-            original = self.num_visitas_extra
+            self.num_visitas_extra += 1
             self.enviar_alerta_nuevo_cobro(
                 mensaje=f"Visita extra (${self.valor_visitas_extra})",
                 generado_por=generado_por,
             )
-        original += 1
         self.total += self.valor_visitas_extra
         self.save()
 
     def agregar_nueva_asesoria(self, asesoria, generado_por: int):
         max_asesorias_mensuales = self.contrato.max_asesorias_mensuales
         if self.num_asesorias < max_asesorias_mensuales:
-            original = self.num_asesorias
+            self.num_asesorias += 1
             self.enviar_alerta_nuevo_cobro(
-                mensaje=f"Asesoría ({original+1} de {max_asesorias_mensuales} gratis)",
+                mensaje=f"Asesoría ({self.num_asesorias} de {max_asesorias_mensuales} gratis)",
                 generado_por=generado_por,
             )
         else:
-            original = self.num_asesorias_extra
+            self.num_asesorias_extra += 1
             self.enviar_alerta_nuevo_cobro(
                 mensaje=f"Asesoría extra (${self.valor_asesorias_extra})",
                 generado_por=generado_por,
             )
-        original += 1
         self.total += self.valor_asesorias_extra
         self.save()
 
@@ -247,5 +250,5 @@ class FacturaMensual(models.Model):
         # TODO: hacer logica por año
 
         self.enviar_alerta_nuevo_cobro(
-            mensaje="Modificicación reporte", generado_por=generado_por
+            mensaje="Modificación reporte", generado_por=generado_por
         )

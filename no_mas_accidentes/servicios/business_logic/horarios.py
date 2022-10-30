@@ -42,8 +42,9 @@ def traer_horarios_disponibles_de_profesional(
         )
         for horario_ocupado in horarios_ocupados:
             if (
-                horario_desde < horario_ocupado.agendado_para + horario_ocupado.duracion
-                and horario_ocupado.agendado_para < horario_hasta
+                horario_desde
+                <= horario_ocupado.agendado_para + horario_ocupado.duracion
+                and horario_ocupado.agendado_para <= horario_hasta
             ):
                 esta_ocupado = True
                 break

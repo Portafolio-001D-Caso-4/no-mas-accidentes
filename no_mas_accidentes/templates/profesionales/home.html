@@ -7,10 +7,20 @@
     <link href="{% static 'libs/@fullcalendar/timegrid/main.min.css' %}" rel="stylesheet" type="text/css" />
 {% endblock %}
 {% block contents %}
+{% if servicio_en_progreso %}
+<div class="alert alert-warning" role="alert">
+  Tienes un {{ servicio_en_progreso.tipo }} a realizar.
+  {% if servicio_en_progreso.tipo == "ASESORIA EMERGENCIA" %}
+      <a href="{% url 'profesionales:asesoria_emergencia_actualizar' pk=servicio_en_progreso.pk %}">
+  {% endif %}
+  Clickea acá</a> para  ir.
+</div>
+{% endif %}
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
+
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="d-flex">
@@ -26,6 +36,8 @@
                                 </div>
                             </div>
                         </div>
+
+
 
                         <div class="col-lg-8 align-self-center">
                             <div class="text-lg-center mt-4 mt-lg-0">
