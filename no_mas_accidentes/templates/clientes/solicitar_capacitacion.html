@@ -1,0 +1,36 @@
+{% extends 'clientes/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block contents %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="container">
+            <div class="card shadow-sm">
+                <h5 class="card-header ">Solicitar capacitación</h5>
+                    <div class="card-body col-lg-12 mt-5">
+                        <form action="" method="post">
+                            {% csrf_token %}
+
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                            <div class="row justify-content-center">
+                                <div class="col-lg-4">
+                                {{ form|crispy }}
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-4 justify-content-end">
+                                <input type="submit" class="btn btn-primary waves-effect waves-light" value="Solicitar capacitación">
+                                <input type="submit" class="btn btn-danger waves-effect waves-light" onclick="window.location='{% url 'clientes:home' %}'; return false;" value="Cancelar">
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
