@@ -2,18 +2,21 @@ import datetime
 
 import arrow
 from django.contrib import messages
-from django.urls import reverse
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import RedirectView, TemplateView
+from django.views.generic import CreateView, RedirectView, TemplateView
 from transbank.error.transaction_commit_error import TransactionCommitError
 from transbank.webpay.webpay_plus.transaction import Transaction
 
 from no_mas_accidentes.administracion.constants import (
     INFORMACION_EMPRESA_PREVENCION_CHILE,
 )
+from no_mas_accidentes.administracion.mixins import PassRequestToFormViewMixin
 from no_mas_accidentes.clientes.business_logic.pagos import realizar_pago_ultima_factura
 from no_mas_accidentes.clientes.constants import app_name
+from no_mas_accidentes.clientes.forms import SolicitarAsesoriaDeEmergenciaForm
 from no_mas_accidentes.clientes.mixins import EsClienteMixin, EsClienteYAdeudadoMixin
 from no_mas_accidentes.clientes.models import FacturaMensual
 from no_mas_accidentes.servicios.business_logic.reportes import (
@@ -76,7 +79,7 @@ class RealizarPagoView(EsClienteMixin, TemplateView):
         context["informacion_empresa"] = INFORMACION_EMPRESA_PREVENCION_CHILE
         context["empresa"] = self.request.user.empresa
         factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
-            contrato__empresa=context["empresa"]
+            contrato__empresa=context["empresa"], es_pagado=False
         ).last()
         context["factura_mensual"] = factura_mensual
         context["pago_realizado"] = False
@@ -174,3 +177,22 @@ class ReporteClienteView(EsClienteMixin, TemplateView):
 
 
 reporte_cliente_view = ReporteClienteView.as_view()
+
+
+class SolicitarAsesoriaDeEmergencia(
+    EsClienteMixin, PassRequestToFormViewMixin, SuccessMessageMixin, CreateView
+):
+    template_name = f"{app_name}/solicitar_asesoria_emergencia.html"
+    form_class = SolicitarAsesoriaDeEmergenciaForm
+    success_url = reverse_lazy(f"{app_name}:home")
+
+    def get_success_message(self, cleaned_data):
+        servicio = self.object.servicio
+        return (
+            f"Asesoría de emergencia {self.object.id} "
+            f"creada satisfactoriamente: Profesional {servicio.profesional} "
+            f"- Horario {arrow.get(servicio.agendado_para).to('America/Santiago').format('YYYY-MM-DD HH:mm:ss')}"
+        )
+
+
+solicitar_asesoria_emergencia_view = SolicitarAsesoriaDeEmergencia.as_view()
