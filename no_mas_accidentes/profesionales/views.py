@@ -1,6 +1,7 @@
 import arrow
 from django.contrib import messages
 from django.db.models import Count
+from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -13,6 +14,9 @@ from no_mas_accidentes.profesionales.business_logic.accidentabilidad import (
 from no_mas_accidentes.profesionales.constants import app_name
 from no_mas_accidentes.profesionales.forms import (
     ActualizarAsesoriaEmergenciaForm,
+    ActualizarAsistenciaParticipanteCapacitacionForm,
+    ActualizarAsistenciaParticipantesFormSetHelper,
+    ActualizarCapacitacionForm,
     DetalleEmpresaForm,
 )
 from no_mas_accidentes.profesionales.mixins import EsProfesionalMixin
@@ -21,7 +25,7 @@ from no_mas_accidentes.servicios.business_logic import (
 )
 from no_mas_accidentes.servicios.constants import TIPOS_DE_SERVICIOS, TiposDeServicio
 from no_mas_accidentes.servicios.forms import CrearOActualizarChecklistBaseForm
-from no_mas_accidentes.servicios.models import ChecklistBase, Servicio
+from no_mas_accidentes.servicios.models import ChecklistBase, Participante, Servicio
 
 
 class Home(EsProfesionalMixin, TemplateView):
@@ -260,3 +264,80 @@ class ActualizarAsesoriaEmergenciaView(EsProfesionalMixin, UpdateView):
 
 
 actualizar_asesoria_emergencia_view = ActualizarAsesoriaEmergenciaView.as_view()
+
+
+class ActualizarCapacitacionView(EsProfesionalMixin, UpdateView):
+    template_name = f"{app_name}/capacitacion/actualizar.html"
+    form_class = ActualizarCapacitacionForm
+    queryset = Servicio.objects.filter(tipo=TiposDeServicio.CAPACITACION)
+
+    def get_success_message(self):
+        return f"Capacitación {self.object.id} actualizada satisfactoriamente"
+
+    def form_valid(self, form):
+        form.save()
+        if form.terminado:
+            messages.success(
+                self.request,
+                f"Capacitación {self.object.id} finalizada satisfactoriamente",
+            )
+            return HttpResponseRedirect(reverse_lazy(f"{app_name}:home"))
+        messages.success(self.request, self.get_success_message())
+        return HttpResponseRedirect(
+            reverse_lazy(
+                f"{app_name}:capacitacion_actualizar",
+                kwargs={"pk": self.object.pk},
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["empresa"] = self.object
+        return context
+
+
+def modificar_asistencia_capacitacion_view(request, pk: int):
+    capacitacion: Servicio = Servicio.objects.filter(
+        tipo=TiposDeServicio.CAPACITACION
+    ).get(pk=pk)
+    participantes = capacitacion.participante_set.all().order_by("rut")
+    helper = ActualizarAsistenciaParticipantesFormSetHelper()
+    actualizar_participantes_forms = modelformset_factory(
+        Participante,
+        form=ActualizarAsistenciaParticipanteCapacitacionForm,
+        min_num=capacitacion.num_participantes,
+        validate_min=True,
+        extra=0,
+    )
+
+    if request.method == "POST":
+        formset = actualizar_participantes_forms(
+            data=request.POST, queryset=participantes
+        )
+        if formset.is_valid():
+            formset.save()
+            messages.success(
+                request=request, message="Asistencia modificada satisfactoriamente"
+            )
+            return HttpResponseRedirect(
+                reverse_lazy(
+                    f"{app_name}:capacitacion_actualizar_asistencia", kwargs={"pk": pk}
+                )
+            )
+    else:
+        formset = actualizar_participantes_forms(queryset=participantes)
+
+    return render(
+        request,
+        f"{app_name}/capacitacion/actualizar_asistencia.html",
+        {
+            "formset": formset,
+            "empresa": Empresa.objects.get(pk=capacitacion.empresa_id),
+            "helper": helper,
+            "object": capacitacion,
+        },
+    )
+
+
+actualizar_capacitacion_view = ActualizarCapacitacionView.as_view()
+actualizar_asistencia_capacitacion_view = modificar_asistencia_capacitacion_view
