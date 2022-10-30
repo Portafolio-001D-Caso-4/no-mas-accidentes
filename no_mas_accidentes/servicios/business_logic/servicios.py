@@ -1,9 +1,20 @@
+import datetime
 from typing import Any
 
+import arrow
+from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
 
-from no_mas_accidentes.servicios.constants import TiposDeServicio
-from no_mas_accidentes.servicios.models import Servicio
+from no_mas_accidentes.clientes.models import Empresa, FacturaMensual
+from no_mas_accidentes.servicios.business_logic.horarios import (
+    traer_horarios_disponibles_de_profesional,
+)
+from no_mas_accidentes.servicios.constants import (
+    TiposDeServicio,
+    duracion_en_hrs_por_servicio,
+)
+from no_mas_accidentes.servicios.models import Evento, Servicio
+from no_mas_accidentes.users.models import User
 
 
 def traer_servicios_por_empresa(id_empresa: int) -> QuerySet[Servicio]:
@@ -68,3 +79,40 @@ def traer_context_data_de_servicios_por_profesional(
         }
         for servicio in servicios
     ]
+
+
+def crear_asesoria_de_emergencia_para_empresa(
+    id_empresa: int, solicitante: User, accidente: Evento, enviar_alerta_accidente=None
+):
+    empresa = Empresa.objects.get(id=id_empresa)
+    try:
+        horario_a_escoger = traer_horarios_disponibles_de_profesional(
+            id_profesional=empresa.profesional_asignado_id
+        )[0]
+    except IndexError:
+        raise ValidationError("El profesional asignado no tiene horarios disponibles")
+    servicio = Servicio(
+        tipo=TiposDeServicio.ASESORIA_EMERGENCIA,
+        profesional_id=empresa.profesional_asignado_id,
+        empresa_id=empresa.id,
+        agendado_para=arrow.get(
+            datetime.datetime.combine(
+                date=horario_a_escoger.fecha_inicio,
+                time=horario_a_escoger.desde,
+            )
+        )
+        .to("UTC")
+        .datetime,
+        duracion=datetime.timedelta(
+            hours=duracion_en_hrs_por_servicio[TiposDeServicio.ASESORIA_EMERGENCIA]
+        ),
+    )
+    servicio.save()
+    accidente.servicio = servicio
+    accidente.save()
+
+    factura_mensual = FacturaMensual.objects.filter(contrato__empresa=empresa).last()
+    factura_mensual.agregar_nueva_asesoria(
+        asesoria=servicio, generado_por=solicitante.id
+    )
+    # enviar_alerta_accidente.delay(id_evento=accidente.id)
