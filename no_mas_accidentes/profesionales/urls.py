@@ -2,6 +2,8 @@ from django.urls import path
 
 from no_mas_accidentes.profesionales.views import (
     actualizar_asesoria_emergencia_view,
+    actualizar_asistencia_capacitacion_view,
+    actualizar_capacitacion_view,
     crear_o_actualizar_checklist_base_view,
     detalle_empresa_informacion_view,
     home_view,
@@ -36,5 +38,15 @@ urlpatterns = [
         "asesoria-emergencia/<int:pk>/actualizar",
         view=actualizar_asesoria_emergencia_view,
         name="asesoria_emergencia_actualizar",
+    ),
+    path(
+        "capacitacion/<int:pk>/actualizar",
+        view=actualizar_capacitacion_view,
+        name="capacitacion_actualizar",
+    ),
+    path(
+        "capacitacion/<int:pk>/asistencia",
+        view=actualizar_asistencia_capacitacion_view,
+        name="capacitacion_actualizar_asistencia",
     ),
 ]

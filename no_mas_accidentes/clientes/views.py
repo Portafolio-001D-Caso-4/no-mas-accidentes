@@ -3,6 +3,9 @@ import datetime
 import arrow
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.forms import modelformset_factory
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -16,16 +19,22 @@ from no_mas_accidentes.administracion.constants import (
 from no_mas_accidentes.administracion.mixins import PassRequestToFormViewMixin
 from no_mas_accidentes.clientes.business_logic.pagos import realizar_pago_ultima_factura
 from no_mas_accidentes.clientes.constants import app_name
-from no_mas_accidentes.clientes.forms import SolicitarAsesoriaDeEmergenciaForm
+from no_mas_accidentes.clientes.forms import (
+    ActualizarParticipanteCapacitacionForm,
+    ActualizarParticipantesFormSetHelper,
+    SolicitarAsesoriaDeEmergenciaForm,
+    SolicitarCapacitacionForm,
+)
 from no_mas_accidentes.clientes.mixins import EsClienteMixin, EsClienteYAdeudadoMixin
-from no_mas_accidentes.clientes.models import FacturaMensual
+from no_mas_accidentes.clientes.models import Empresa, FacturaMensual
 from no_mas_accidentes.servicios.business_logic.reportes import (
     traer_informacion_reporte_cliente,
 )
 from no_mas_accidentes.servicios.business_logic.servicios import (
     traer_context_data_de_servicios_por_empresa,
 )
-from no_mas_accidentes.servicios.models import Evento
+from no_mas_accidentes.servicios.constants import TiposDeServicio
+from no_mas_accidentes.servicios.models import Evento, Participante, Servicio
 
 
 class Home(EsClienteYAdeudadoMixin, TemplateView):
@@ -196,3 +205,70 @@ class SolicitarAsesoriaDeEmergencia(
 
 
 solicitar_asesoria_emergencia_view = SolicitarAsesoriaDeEmergencia.as_view()
+
+
+class SolicitarCapacitacion(
+    EsClienteMixin, PassRequestToFormViewMixin, SuccessMessageMixin, CreateView
+):
+    template_name = f"{app_name}/solicitar_capacitacion.html"
+    form_class = SolicitarCapacitacionForm
+    success_url = reverse_lazy(f"{app_name}:home")
+
+    def get_success_message(self, cleaned_data):
+        return (
+            f"Capacitación {self.object.id} "
+            f"creada satisfactoriamente: Profesional {self.object.profesional} "
+            f"- Horario {arrow.get(self.object.agendado_para).to('America/Santiago').format('YYYY-MM-DD HH:mm:ss')}"
+        )
+
+    def get_success_url(self) -> str:
+        return reverse_lazy(
+            f"{app_name}:modificar_participantes_capacitacion",
+            kwargs={"pk": self.object.pk},
+        )
+
+
+def modificar_participantes_capacitacion_view(request, pk: int):
+    capacitacion: Servicio = Servicio.objects.filter(
+        tipo=TiposDeServicio.CAPACITACION, empresa_id=request.user.empresa_id
+    ).get(pk=pk)
+    participantes = capacitacion.participante_set.all().order_by("rut")
+    helper = ActualizarParticipantesFormSetHelper()
+    actualizar_participantes_forms = modelformset_factory(
+        Participante,
+        form=ActualizarParticipanteCapacitacionForm,
+        min_num=capacitacion.num_participantes,
+        validate_min=True,
+        extra=0,
+    )
+
+    if request.method == "POST":
+        formset = actualizar_participantes_forms(
+            data=request.POST, queryset=participantes
+        )
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for participante in instances:
+                participante.servicio = capacitacion
+                participante.save()
+            formset.save_m2m()
+            messages.success(
+                request=request, message="Participantes modificados satisfactoriamente"
+            )
+            return HttpResponseRedirect(reverse_lazy(f"{app_name}:home"))
+    else:
+        formset = actualizar_participantes_forms(queryset=participantes)
+
+    return render(
+        request,
+        f"{app_name}/capacitacion/actualizar_participantes.html",
+        {
+            "formset": formset,
+            "empresa": Empresa.objects.get(pk=capacitacion.empresa_id),
+            "helper": helper,
+        },
+    )
+
+
+solicitar_capacitacion_view = SolicitarCapacitacion.as_view()
+modificar_participantes_capacitacion_view = modificar_participantes_capacitacion_view
