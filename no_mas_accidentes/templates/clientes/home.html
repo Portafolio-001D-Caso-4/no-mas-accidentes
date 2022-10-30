@@ -74,6 +74,11 @@
                                     <span>de </span><span class="badge badge-soft-success font-size-12"> {{ max_num_visitas }} </span> <span class="ms-2 text-truncate">máximo</span>
                                 </div>
                             </div>
+                            <div class="col-12 align-items-end mt-3">
+                                <a class="col-12 btn btn-warning waves-effect waves-light">
+                                    <i class="bx bxs-alarm-add font-size-16 align-middle me-2"></i> Solicitar
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -94,6 +99,11 @@
                                 <div class="d-flex">
                                     <span>de </span><span class="badge badge-soft-success font-size-12"> {{ max_num_capacitaciones }} </span> <span class="ms-2 text-truncate">máximo</span>
                                 </div>
+                            </div>
+                            <div class="col-12 align-items-end mt-3">
+                                <a href="{% url 'clientes:solicitar_capacitacion' %}"  class="col-12 btn btn-warning waves-effect waves-light">
+                                    <i class="bx bxs-alarm-add font-size-16 align-middle me-2"></i> Solicitar
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -117,6 +127,11 @@
                                     <span>de</span><span class="badge badge-soft-warning font-size-12"> {{ max_num_asesorias }}</span> <span class="ms-2 text-truncate">máximo</span>
                                 </div>
                             </div>
+                            <div class="col-12 align-items-end mt-3">
+                                <a class="col-12 btn btn-warning waves-effect waves-light">
+                                    <i class="bx bxs-alarm-add font-size-16 align-middle me-2"></i> Solicitar
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -137,6 +152,11 @@
                                 <div class="d-flex">
                                     <span class="badge badge-soft-warning font-size-12"> {{ num_llamadas_extra }} </span> <span class="ms-2 text-truncate">fuera de horario</span>
                                 </div>
+                            </div>
+                            <div class="col-12 align-items-end mt-3">
+                                <a class="col-12 btn btn-warning waves-effect waves-light">
+                                    <i class="bx bx-phone-call font-size-16 align-middle me-2"></i> Llamar
+                                </a>
                             </div>
                         </div>
                     </div>
