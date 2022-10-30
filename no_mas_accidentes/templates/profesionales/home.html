@@ -12,6 +12,8 @@
   Tienes un {{ servicio_en_progreso.tipo }} a realizar.
   {% if servicio_en_progreso.tipo == "ASESORIA EMERGENCIA" %}
       <a href="{% url 'profesionales:asesoria_emergencia_actualizar' pk=servicio_en_progreso.pk %}">
+  {% elif servicio_en_progreso.tipo == "CAPACITACION" %}
+      <a href="{% url 'profesionales:capacitacion_actualizar' pk=servicio_en_progreso.pk %}">
   {% endif %}
   Clickea acá</a> para  ir.
 </div>
