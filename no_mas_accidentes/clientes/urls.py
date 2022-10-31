@@ -9,6 +9,7 @@ from no_mas_accidentes.clientes.views import (
     reporte_cliente_view,
     solicitar_asesoria_emergencia_view,
     solicitar_capacitacion_view,
+    solicitar_visita_view,
     transaccion_exitosa_view,
 )
 
@@ -42,5 +43,10 @@ urlpatterns = [
         "capacitacion/<int:pk>/modificar-participantes/",
         view=modificar_participantes_capacitacion_view,
         name="modificar_participantes_capacitacion",
+    ),
+    path(
+        "solicitar-visita/",
+        view=solicitar_visita_view,
+        name="solicitar_visita",
     ),
 ]
