@@ -24,6 +24,7 @@ from no_mas_accidentes.clientes.forms import (
     ActualizarParticipantesFormSetHelper,
     SolicitarAsesoriaDeEmergenciaForm,
     SolicitarCapacitacionForm,
+    SolicitarVisitaForm,
 )
 from no_mas_accidentes.clientes.mixins import EsClienteMixin, EsClienteYAdeudadoMixin
 from no_mas_accidentes.clientes.models import Empresa, FacturaMensual
@@ -272,3 +273,21 @@ def modificar_participantes_capacitacion_view(request, pk: int):
 
 solicitar_capacitacion_view = SolicitarCapacitacion.as_view()
 modificar_participantes_capacitacion_view = modificar_participantes_capacitacion_view
+
+
+class SolicitarVisitaView(
+    EsClienteMixin, PassRequestToFormViewMixin, SuccessMessageMixin, CreateView
+):
+    template_name = f"{app_name}/solicitar_visita.html"
+    form_class = SolicitarVisitaForm
+    success_url = reverse_lazy(f"{app_name}:home")
+
+    def get_success_message(self, cleaned_data):
+        return (
+            f"Visita {self.object.id} "
+            f"creada satisfactoriamente: Profesional {self.object.profesional} "
+            f"- Horario {arrow.get(self.object.agendado_para).to('America/Santiago').format('YYYY-MM-DD HH:mm:ss')}"
+        )
+
+
+solicitar_visita_view = SolicitarVisitaView.as_view()
