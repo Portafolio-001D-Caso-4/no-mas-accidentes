@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.forms import DateTimeInput, ModelForm
 
-from no_mas_accidentes.clientes.models import Empresa
+from no_mas_accidentes.clientes.models import Empresa, FacturaMensual
 from no_mas_accidentes.servicios.business_logic.horarios import (
     traer_horarios_disponibles_de_profesional,
 )
@@ -91,9 +91,15 @@ class SolicitarCapacitacionForm(ModelForm):
                 .datetime
             )
             capacitacion.duracion = datetime.timedelta(
-                hours=duracion_en_hrs_por_servicio[TiposDeServicio.ASESORIA_EMERGENCIA]
+                hours=duracion_en_hrs_por_servicio[TiposDeServicio.CAPACITACION]
             )
             capacitacion.save()
+            factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
+                contrato__empresa=empresa
+            ).last()
+            factura_mensual.agregar_nueva_capacitacion(
+                capacitacion=capacitacion, generado_por=self.request.user.id
+            )
         return capacitacion
 
 
@@ -111,3 +117,53 @@ class ActualizarParticipantesFormSetHelper(FormHelper):
         self.layout = Layout(
             Fieldset("Participante #{{forloop.counter}}"), "rut", "nombre", "email"
         )
+
+
+class SolicitarVisitaForm(ModelForm):
+    class Meta:
+        model = Servicio
+        fields = ("motivo",)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        for fieldname in self.fields:
+            self.fields[fieldname].required = True
+
+    def save(self, commit: bool = True):
+        with transaction.atomic():
+            visita: Servicio = super().save(commit=False)
+            id_empresa = self.request.user.empresa_id
+            empresa = Empresa.objects.get(pk=id_empresa)
+            try:
+                horario_a_escoger = traer_horarios_disponibles_de_profesional(
+                    id_profesional=empresa.profesional_asignado_id
+                )[0]
+            except IndexError:
+                raise ValidationError(
+                    "El profesional asignado no tiene horarios disponibles"
+                )
+            visita.tipo = TiposDeServicio.VISITA
+            visita.profesional_id = empresa.profesional_asignado_id
+            visita.empresa_id = empresa.id
+            visita.agendado_para = (
+                arrow.get(
+                    datetime.datetime.combine(
+                        date=horario_a_escoger.fecha_inicio,
+                        time=horario_a_escoger.desde,
+                    )
+                )
+                .to("UTC")
+                .datetime
+            )
+            visita.duracion = datetime.timedelta(
+                hours=duracion_en_hrs_por_servicio[TiposDeServicio.VISITA]
+            )
+            visita.save()
+            factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
+                contrato__empresa=empresa
+            ).last()
+            factura_mensual.agregar_nueva_visita(
+                visita=visita, generado_por=self.request.user.id
+            )
+        return visita
