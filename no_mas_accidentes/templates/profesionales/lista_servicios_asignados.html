@@ -103,6 +103,21 @@
                                 <td>
                                     <ul class="list-inline font-size-20 contact-links mb-0">
                                         <li class="list-inline-item px-2">
+                                            {% if servicio.tipo == "ASESORIA EMERGENCIA" %}
+                                                <a href="{% url 'profesionales:asesoria_emergencia_actualizar' pk=servicio.pk %}" title="Editar asesoría de emergencia"><i class="bx bx bxs-edit"></i>
+                                            </a>
+                                            {% elif servicio.tipo == "CAPACITACION" %}
+                                                <a href="{% url 'profesionales:capacitacion_actualizar' pk=servicio.pk %}" title="Editar capacitación"><i class="bx bx bxs-edit"></i>
+                                            </a>
+                                            {% elif servicio.tipo == "VISITA" %}
+                                                <a href="{% url 'profesionales:visita_actualizar' pk=servicio.pk %}" title="Editar visita"><i class="bx bx bxs-edit"></i>
+                                            </a>
+                                            {% elif servicio.tipo == "ASESORIA FISCALIZACION" %}
+                                                <a href="{% url 'profesionales:asesoria_actualizar' pk=servicio.pk %}" title="Editar visita"><i class="bx bx bxs-edit"></i>
+                                            </a>
+                                            {% endif %}
+                                        </li>
+                                        <li class="list-inline-item px-2">
                                             <a href="{% url 'profesionales:empresas_asignadas_detalle_informacion' pk=servicio.empresa.pk %}" title="Ver empresa"><i class="bx bx bxs-business"></i></a>
                                         </li>
                                     </ul>
