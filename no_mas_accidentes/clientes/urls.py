@@ -3,6 +3,7 @@ from django.urls import path
 from no_mas_accidentes.clientes.views import (
     empresa_adeudada_view,
     home_view,
+    modificar_multa_view,
     modificar_participantes_capacitacion_view,
     realizar_pago_view,
     recepcion_transaccion_view,
@@ -54,5 +55,10 @@ urlpatterns = [
         "solicitar-asesoria/",
         view=solicitar_asesoria_view,
         name="solicitar_asesoria",
+    ),
+    path(
+        "asesoria/<int:pk>/modificar-multa",
+        view=modificar_multa_view,
+        name="asesoria_modificar_multa",
     ),
 ]
