@@ -50,7 +50,7 @@ urlpatterns = [
     path(
         "capacitacion/<int:pk>/asistencia",
         view=actualizar_asistencia_capacitacion_view,
-        name="ccapacitacionapacitacion_actualizar_asistencia",
+        name="capacitacion_actualizar_asistencia",
     ),
     path(
         "visita/<int:pk>/actualizar",
