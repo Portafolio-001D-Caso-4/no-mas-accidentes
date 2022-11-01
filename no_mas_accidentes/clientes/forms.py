@@ -229,3 +229,27 @@ class SolicitarAsesoriaForm(ModelForm):
                 asesoria=asesoria, generado_por=self.request.user.id
             )
         return asesoria
+
+
+class ActualizarMultaAsesoriaForm(ModelForm):
+    class Meta:
+        model = Evento
+        fields = (
+            "fecha",
+            "contenido",
+        )
+        widgets = {
+            "fecha": DateTimeInput(attrs={"type": "datetime-local"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        self.id_servicio = kwargs.pop("id_servicio")
+
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit: bool = True):
+        self.instance.tipo = "MULTA"
+        self.instance.servicio_id = self.id_servicio
+        evento = super().save(commit=commit)
+        return evento
