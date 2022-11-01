@@ -18,7 +18,13 @@ from no_mas_accidentes.servicios.constants import (
     TiposDeServicio,
     duracion_en_hrs_por_servicio,
 )
-from no_mas_accidentes.servicios.models import Evento, Participante, Servicio
+from no_mas_accidentes.servicios.models import (
+    Checklist,
+    ChecklistBase,
+    Evento,
+    Participante,
+    Servicio,
+)
 
 
 class SolicitarAsesoriaDeEmergenciaForm(ModelForm):
@@ -160,6 +166,10 @@ class SolicitarVisitaForm(ModelForm):
                 hours=duracion_en_hrs_por_servicio[TiposDeServicio.VISITA]
             )
             visita.save()
+            checklist_base: ChecklistBase = ChecklistBase.objects.filter(
+                empresa_id=id_empresa
+            ).last()
+            Checklist.objects.create(items=checklist_base.items, servicio=visita)
             factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
                 contrato__empresa=empresa
             ).last()
