@@ -177,3 +177,55 @@ class SolicitarVisitaForm(ModelForm):
                 visita=visita, generado_por=self.request.user.id
             )
         return visita
+
+
+class SolicitarAsesoriaForm(ModelForm):
+    class Meta:
+        model = Servicio
+        fields = ("motivo",)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        for fieldname in self.fields:
+            self.fields[fieldname].required = True
+
+    def save(self, commit: bool = True):
+        with transaction.atomic():
+            asesoria: Servicio = super().save(commit=False)
+            id_empresa = self.request.user.empresa_id
+            empresa = Empresa.objects.get(pk=id_empresa)
+            try:
+                horario_a_escoger = traer_horarios_disponibles_de_profesional(
+                    id_profesional=empresa.profesional_asignado_id
+                )[0]
+            except IndexError:
+                raise ValidationError(
+                    "El profesional asignado no tiene horarios disponibles"
+                )
+            asesoria.tipo = TiposDeServicio.ASESORIA_FISCALIZACION
+            asesoria.profesional_id = empresa.profesional_asignado_id
+            asesoria.empresa_id = empresa.id
+            asesoria.agendado_para = (
+                arrow.get(
+                    datetime.datetime.combine(
+                        date=horario_a_escoger.fecha_inicio,
+                        time=horario_a_escoger.desde,
+                    )
+                )
+                .to("UTC")
+                .datetime
+            )
+            asesoria.duracion = datetime.timedelta(
+                hours=duracion_en_hrs_por_servicio[
+                    TiposDeServicio.ASESORIA_FISCALIZACION
+                ]
+            )
+            asesoria.save()
+            factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
+                contrato__empresa=empresa
+            ).last()
+            factura_mensual.agregar_nueva_asesoria(
+                asesoria=asesoria, generado_por=self.request.user.id
+            )
+        return asesoria

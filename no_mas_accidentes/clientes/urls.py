@@ -8,6 +8,7 @@ from no_mas_accidentes.clientes.views import (
     recepcion_transaccion_view,
     reporte_cliente_view,
     solicitar_asesoria_emergencia_view,
+    solicitar_asesoria_view,
     solicitar_capacitacion_view,
     solicitar_visita_view,
     transaccion_exitosa_view,
@@ -48,5 +49,10 @@ urlpatterns = [
         "solicitar-visita/",
         view=solicitar_visita_view,
         name="solicitar_visita",
+    ),
+    path(
+        "solicitar-asesoria/",
+        view=solicitar_asesoria_view,
+        name="solicitar_asesoria",
     ),
 ]

@@ -23,6 +23,7 @@ from no_mas_accidentes.clientes.forms import (
     ActualizarParticipanteCapacitacionForm,
     ActualizarParticipantesFormSetHelper,
     SolicitarAsesoriaDeEmergenciaForm,
+    SolicitarAsesoriaForm,
     SolicitarCapacitacionForm,
     SolicitarVisitaForm,
 )
@@ -213,7 +214,6 @@ class SolicitarCapacitacion(
 ):
     template_name = f"{app_name}/solicitar_capacitacion.html"
     form_class = SolicitarCapacitacionForm
-    success_url = reverse_lazy(f"{app_name}:home")
 
     def get_success_message(self, cleaned_data):
         return (
@@ -291,3 +291,26 @@ class SolicitarVisitaView(
 
 
 solicitar_visita_view = SolicitarVisitaView.as_view()
+
+
+class SolicitarAsesoria(
+    EsClienteMixin, PassRequestToFormViewMixin, SuccessMessageMixin, CreateView
+):
+    template_name = f"{app_name}/solicitar_asesoria.html"
+    form_class = SolicitarAsesoriaForm
+
+    def get_success_message(self, cleaned_data):
+        return (
+            f"Asesoría {self.object.id} "
+            f"creada satisfactoriamente: Profesional {self.object.profesional} "
+            f"- Horario {arrow.get(self.object.agendado_para).to('America/Santiago').format('YYYY-MM-DD HH:mm:ss')}"
+        )
+
+    def get_success_url(self) -> str:
+        return reverse_lazy(
+            f"{app_name}:modificar_multas_asesoria",
+            kwargs={"pk": self.object.pk},
+        )
+
+
+solicitar_asesoria_view = SolicitarAsesoria.as_view()
