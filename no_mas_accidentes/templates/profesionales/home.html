@@ -15,7 +15,7 @@
       Tienes una CAPACITACIÓN a realizar. <a href="{% url 'profesionales:capacitacion_actualizar' pk=servicio_en_progreso.pk %}">Clickea acá</a> para  ir.
   {% elif servicio_en_progreso.tipo == "VISITA" %}
       Tienes una VISITA a realizar. <a href="{% url 'profesionales:visita_actualizar' pk=servicio_en_progreso.pk %}">Clickea acá</a> para  ir.
-  {% elif servicio_en_progreso.tipo == "VISITA" %}
+  {% elif servicio_en_progreso.tipo == "ASESORIA FISCALIZACION" %}
       Tienes una VISITA a realizar. <a href="{% url 'profesionales:asesoria_actualizar' pk=servicio_en_progreso.pk %}">Clickea acá</a> para  ir.
   {% endif %}
 </div>
