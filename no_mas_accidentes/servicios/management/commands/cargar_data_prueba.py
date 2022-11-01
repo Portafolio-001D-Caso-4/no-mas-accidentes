@@ -13,7 +13,12 @@ from no_mas_accidentes.servicios.constants import (
     TiposDeServicio,
     duracion_en_hrs_por_servicio,
 )
-from no_mas_accidentes.servicios.models import Evento, Participante, Servicio
+from no_mas_accidentes.servicios.models import (
+    ChecklistBase,
+    Evento,
+    Participante,
+    Servicio,
+)
 
 
 def cargar_capacitaciones_para_empresa(empresa_id: int, mes: str):
@@ -305,6 +310,18 @@ def cargar_llamadas_para_empresa(empresa_id: int, mes: str):
     factura.save()
 
 
+def cargar_checklist_base(empresa_id: int):
+    empresa = Empresa.objects.get(id=empresa_id)
+    ChecklistBase.objects.create(
+        items={
+            "Cumple con las normas básicas de higiene": False,
+            "Todos los trabajadores conocen el reglamento interno": False,
+            "Todos los trabajadores usan el vestuario adecuado a sus labores": False,
+        },
+        empresa=empresa,
+    )
+
+
 class Command(BaseCommand):
     help = "Carga datos de prueba"
 
@@ -342,6 +359,10 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Visitas cargadas satisfactoriamente"))
         cargar_llamadas_para_empresa(empresa_id=empresa_id, mes=mes)
         self.stdout.write(self.style.SUCCESS("Llamadas cargadas satisfactoriamente"))
+        cargar_checklist_base(empresa_id=empresa_id)
+        self.stdout.write(
+            self.style.SUCCESS("ChecklistBase cargado satisfactoriamente")
+        )
         actualizar_reporte_cliente(empresa_id=empresa_id)
         self.stdout.write(
             self.style.SUCCESS("Reporte de cliente actualizado satisfactoriamente")
