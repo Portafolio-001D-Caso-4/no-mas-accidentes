@@ -68,7 +68,7 @@
                     $("#event-empresa").val(selectedEvent.extendedProps.empresa);
                     $("#event-desde").val(selectedEvent.start.toLocaleString("es-ES"));
                     $("#event-hasta").val(selectedEvent.end.toLocaleString("es-ES"));
-                    $("#evento-url").prop('href', selectedEvent.extendedProps.urlEvento);
+                    $("#event-url").prop('href', selectedEvent.extendedProps.urlEvento);
                     $("#event-title").prop('disabled', true);
                     $('#event-category').prop('disabled', true);
                     $("#event-profesional").prop('disabled', true);
