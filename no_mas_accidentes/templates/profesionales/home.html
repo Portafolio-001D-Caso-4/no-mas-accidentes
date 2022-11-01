@@ -7,16 +7,17 @@
     <link href="{% static 'libs/@fullcalendar/timegrid/main.min.css' %}" rel="stylesheet" type="text/css" />
 {% endblock %}
 {% block contents %}
-{% if servicio_en_progreso %}
+{% if servicio_en_progreso and servicio_en_progreso != "LLAMADA" %}
 <div class="alert alert-warning" role="alert">
   {% if servicio_en_progreso.tipo == "ASESORIA EMERGENCIA" %}
-      Tienes una ASESORÍA DE EMERGENCIA a realizar. <a href="{% url 'profesionales:asesoria_emergencia_actualizar' pk=servicio_en_progreso.pk %}">
+      Tienes una ASESORÍA DE EMERGENCIA a realizar. <a href="{% url 'profesionales:asesoria_emergencia_actualizar' pk=servicio_en_progreso.pk %}">Clickea acá</a> para  ir.
   {% elif servicio_en_progreso.tipo == "CAPACITACION" %}
-      Tienes una CAPACITACIÓN a realizar. <a href="{% url 'profesionales:capacitacion_actualizar' pk=servicio_en_progreso.pk %}">
+      Tienes una CAPACITACIÓN a realizar. <a href="{% url 'profesionales:capacitacion_actualizar' pk=servicio_en_progreso.pk %}">Clickea acá</a> para  ir.
   {% elif servicio_en_progreso.tipo == "VISITA" %}
-      Tienes una VISITA a realizar. <a href="{% url 'profesionales:visita_actualizar' pk=servicio_en_progreso.pk %}">
+      Tienes una VISITA a realizar. <a href="{% url 'profesionales:visita_actualizar' pk=servicio_en_progreso.pk %}">Clickea acá</a> para  ir.
+  {% elif servicio_en_progreso.tipo == "VISITA" %}
+      Tienes una VISITA a realizar. <a href="{% url 'profesionales:asesoria_actualizar' pk=servicio_en_progreso.pk %}">Clickea acá</a> para  ir.
   {% endif %}
-  Clickea acá</a> para  ir.
 </div>
 {% endif %}
     <div class="row">
@@ -258,6 +259,7 @@
 <!--                                        <button type="button" class="btn btn-danger" id="btn-delete-event">Delete</button>-->
 <!--                                    </div>-->
                                     <div class="col-12 text-end">
+                                        <a id="evento-url" class="btn button btn-info" >Ir al evento</a>
                                         <button type="button" class="btn btn-light me-1" data-bs-dismiss="modal">Cerrar</button>
 <!--                                        <button type="submit" class="btn btn-success" id="btn-save-event">Save</button>-->
                                     </div>
@@ -286,10 +288,11 @@ var defaultEvents = [
       title: '{{ agenda.title }}',
       start: new Date({{ agenda.year }} , {{ agenda.month }}-1 , {{ agenda.day }}, {{ agenda.start_hour }} , {{ agenda.start_min}} ),
       end: new Date({{agenda.year }}, {{ agenda.month }}-1, {{ agenda.day }}, {{ agenda.end_hour }}, {{ agenda.end_min }}),
-      url: '{{ agenda.url }}',
+      url: '#',
       className: '{{ agenda.class_name }}',
       profesionalAsignado: '{{ agenda.profesional_asignado }}',
-      empresa: '{{ agenda.empresa }}'
+      empresa: '{{ agenda.empresa }}',
+      urlEvento: '{{ agenda.url }}'
   },
   {% endfor %}
 ];

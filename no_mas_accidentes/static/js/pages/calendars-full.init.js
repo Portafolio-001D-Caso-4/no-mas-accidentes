@@ -62,13 +62,13 @@
                     addEvent.modal('show');
                     formEvent[0].reset();
                     selectedEvent = info.event;
-                    console.log(selectedEvent)
                     $("#event-title").val(selectedEvent.title);
                     $('#event-category').val(selectedEvent.classNames[0]);
                     $("#event-profesional").val(selectedEvent.extendedProps.profesionalAsignado);
                     $("#event-empresa").val(selectedEvent.extendedProps.empresa);
                     $("#event-desde").val(selectedEvent.start.toLocaleString("es-ES"));
                     $("#event-hasta").val(selectedEvent.end.toLocaleString("es-ES"));
+                    $("#evento-url").prop('href', selectedEvent.extendedProps.urlEvento);
                     $("#event-title").prop('disabled', true);
                     $('#event-category').prop('disabled', true);
                     $("#event-profesional").prop('disabled', true);
