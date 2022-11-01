@@ -17,6 +17,10 @@ from no_mas_accidentes.profesionales.forms import (
     ActualizarAsistenciaParticipanteCapacitacionForm,
     ActualizarAsistenciaParticipantesFormSetHelper,
     ActualizarCapacitacionForm,
+    ActualizarChecklistForm,
+    ActualizarOportunidadDeMejoraVisitaForm,
+    ActualizarOportunidadDeMejoraVisitaFormSetHelper,
+    ActualizarVisitaForm,
     DetalleEmpresaForm,
 )
 from no_mas_accidentes.profesionales.mixins import EsProfesionalMixin
@@ -25,7 +29,13 @@ from no_mas_accidentes.servicios.business_logic import (
 )
 from no_mas_accidentes.servicios.constants import TIPOS_DE_SERVICIOS, TiposDeServicio
 from no_mas_accidentes.servicios.forms import CrearOActualizarChecklistBaseForm
-from no_mas_accidentes.servicios.models import ChecklistBase, Participante, Servicio
+from no_mas_accidentes.servicios.models import (
+    Checklist,
+    ChecklistBase,
+    OportunidadDeMejora,
+    Participante,
+    Servicio,
+)
 
 
 class Home(EsProfesionalMixin, TemplateView):
@@ -341,3 +351,119 @@ def modificar_asistencia_capacitacion_view(request, pk: int):
 
 actualizar_capacitacion_view = ActualizarCapacitacionView.as_view()
 actualizar_asistencia_capacitacion_view = modificar_asistencia_capacitacion_view
+
+
+class ActualizarVisitaView(EsProfesionalMixin, UpdateView):
+    template_name = f"{app_name}/visita/actualizar.html"
+    form_class = ActualizarVisitaForm
+    queryset = Servicio.objects.filter(tipo=TiposDeServicio.VISITA)
+
+    def get_success_message(self):
+        return f"Visita {self.object.id} actualizada satisfactoriamente"
+
+    def form_valid(self, form):
+        form.save()
+        if form.terminado:
+            messages.success(
+                self.request,
+                f"Visita {self.object.id} finalizada satisfactoriamente",
+            )
+            return HttpResponseRedirect(reverse_lazy(f"{app_name}:home"))
+        messages.success(self.request, self.get_success_message())
+        return HttpResponseRedirect(
+            reverse_lazy(
+                f"{app_name}:visita_actualizar",
+                kwargs={"pk": self.object.pk},
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["empresa"] = self.object.empresa
+        return context
+
+
+def actualizar_checklist_view(request, pk: int):
+    visita: Servicio = Servicio.objects.filter(tipo=TiposDeServicio.VISITA).get(pk=pk)
+
+    checklist: Checklist = Checklist.objects.get(servicio=visita)
+    item_por_id = {
+        f"item_{index}": item for index, item in enumerate(checklist.items, start=1)
+    }
+    data_inicial = {"numero_de_items": len(checklist.items), **item_por_id}
+
+    if request.method == "POST":
+        form = ActualizarChecklistForm(
+            request.POST,
+            request=request,
+            numero_de_items=request.POST.get("numero_de_items"),
+            id_servicio=pk,
+            initial=data_inicial,
+        )
+
+        if form.is_valid():
+            form.save()
+    else:
+        form = ActualizarChecklistForm(
+            request=request, id_servicio=pk, initial=data_inicial
+        )
+        # ver esta template
+    return render(
+        request,
+        f"{app_name}/visita/actualizar_checklist.html",
+        {"form": form, "empresa": visita.empresa, "object": visita},
+    )
+
+
+def actualizar_actividad_de_mejora_view(request, pk: int):
+    visita: Servicio = Servicio.objects.filter(tipo=TiposDeServicio.VISITA).get(pk=pk)
+    oportunidades_de_mejora = visita.oportunidaddemejora_set.all().order_by("contenido")
+    helper = ActualizarOportunidadDeMejoraVisitaFormSetHelper()
+    actualizar_oportunidades_de_mejora_forms = modelformset_factory(
+        OportunidadDeMejora,
+        form=ActualizarOportunidadDeMejoraVisitaForm,
+        min_num=2,
+        validate_min=True,
+        extra=1,
+        max_num=15,
+        absolute_max=15,
+    )
+
+    if request.method == "POST":
+        formset = actualizar_oportunidades_de_mejora_forms(
+            data=request.POST, queryset=oportunidades_de_mejora
+        )
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for oportunidad in instances:
+                oportunidad.servicio = visita
+                oportunidad.save()
+            formset.save_m2m()
+            messages.success(
+                request=request, message="Actividades modificadas satisfactoriamente"
+            )
+            return HttpResponseRedirect(
+                reverse_lazy(
+                    f"{app_name}:visita_actualizar_actividad_mejora", kwargs={"pk": pk}
+                )
+            )
+    else:
+        formset = actualizar_oportunidades_de_mejora_forms(
+            queryset=oportunidades_de_mejora
+        )
+
+    return render(
+        request,
+        f"{app_name}/visita/actividades_de_mejora.html",
+        {
+            "formset": formset,
+            "empresa": Empresa.objects.get(pk=visita.empresa_id),
+            "helper": helper,
+            "object": visita,
+        },
+    )
+
+
+actualizar_visita_view = ActualizarVisitaView.as_view()
+actualizar_actividad_de_mejora_view = actualizar_actividad_de_mejora_view
+actualizar_checklist_view = actualizar_checklist_view
