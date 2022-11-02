@@ -14,6 +14,7 @@ from no_mas_accidentes.profesionales.business_logic.accidentabilidad import (
 from no_mas_accidentes.profesionales.constants import app_name
 from no_mas_accidentes.profesionales.forms import (
     ActualizarAsesoriaEmergenciaForm,
+    ActualizarAsesoriaFiscalizacionForm,
     ActualizarAsistenciaParticipanteCapacitacionForm,
     ActualizarAsistenciaParticipantesFormSetHelper,
     ActualizarCapacitacionForm,
@@ -467,3 +468,39 @@ def actualizar_actividad_de_mejora_view(request, pk: int):
 actualizar_visita_view = ActualizarVisitaView.as_view()
 actualizar_actividad_de_mejora_view = actualizar_actividad_de_mejora_view
 actualizar_checklist_view = actualizar_checklist_view
+
+
+class ActualizarAsesoriaFiscalizacionView(EsProfesionalMixin, UpdateView):
+    template_name = f"{app_name}/asesoria/actualizar.html"
+    form_class = ActualizarAsesoriaFiscalizacionForm
+    queryset = Servicio.objects.filter(tipo=TiposDeServicio.ASESORIA_FISCALIZACION)
+
+    def get_success_message(self):
+        return (
+            f"Asesoría de fiscalización {self.object.id} actualizada satisfactoriamente"
+        )
+
+    def form_valid(self, form):
+        form.save()
+        if form.terminado:
+            messages.success(
+                self.request,
+                f"Asesoría de fiscalización {self.object.id} finalizada satisfactoriamente",
+            )
+            return HttpResponseRedirect(reverse_lazy(f"{app_name}:home"))
+        messages.success(self.request, self.get_success_message())
+        return HttpResponseRedirect(
+            reverse_lazy(
+                f"{app_name}:asesoria_actualizar",
+                kwargs={"pk": self.object.pk},
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["empresa"] = self.object
+        context["multa"] = self.object.evento_set.first()
+        return context
+
+
+actualizar_asesoria_view = ActualizarAsesoriaFiscalizacionView.as_view()

@@ -245,3 +245,39 @@ class ActualizarOportunidadDeMejoraVisitaFormSetHelper(FormHelper):
         self.layout = Layout(
             Fieldset("Actividad de mejora #{{forloop.counter}}"), "contenido"
         )
+
+
+class ActualizarAsesoriaFiscalizacionForm(ModelForm):
+    class Meta:
+        model = Servicio
+        readonly_fields = (
+            "profesional",
+            "empresa",
+            "agendado_para",
+        )
+        fields = readonly_fields + (
+            "motivo",
+            "contenido",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.terminado = False
+        for fieldname in self.Meta.readonly_fields:
+            self.fields[fieldname].disabled = True
+
+    def clean(self):
+        self.data = self.data.copy()
+        if "Finalizar" in self.data:
+            self.terminado = True
+        else:
+            self.terminado = False
+        cleaned_data = super().clean()
+        return cleaned_data
+
+    def save(self, commit: bool = True):
+        asesoria_fiscalizacion = super().save(commit=False)
+        if self.terminado:
+            asesoria_fiscalizacion.realizado_en = arrow.utcnow().datetime
+        asesoria_fiscalizacion.save()
+        return asesoria_fiscalizacion

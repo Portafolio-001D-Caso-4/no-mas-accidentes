@@ -20,9 +20,11 @@ from no_mas_accidentes.administracion.mixins import PassRequestToFormViewMixin
 from no_mas_accidentes.clientes.business_logic.pagos import realizar_pago_ultima_factura
 from no_mas_accidentes.clientes.constants import app_name
 from no_mas_accidentes.clientes.forms import (
+    ActualizarMultaAsesoriaForm,
     ActualizarParticipanteCapacitacionForm,
     ActualizarParticipantesFormSetHelper,
     SolicitarAsesoriaDeEmergenciaForm,
+    SolicitarAsesoriaForm,
     SolicitarCapacitacionForm,
     SolicitarVisitaForm,
 )
@@ -213,7 +215,6 @@ class SolicitarCapacitacion(
 ):
     template_name = f"{app_name}/solicitar_capacitacion.html"
     form_class = SolicitarCapacitacionForm
-    success_url = reverse_lazy(f"{app_name}:home")
 
     def get_success_message(self, cleaned_data):
         return (
@@ -291,3 +292,60 @@ class SolicitarVisitaView(
 
 
 solicitar_visita_view = SolicitarVisitaView.as_view()
+
+
+class SolicitarAsesoria(
+    EsClienteMixin, PassRequestToFormViewMixin, SuccessMessageMixin, CreateView
+):
+    template_name = f"{app_name}/solicitar_asesoria.html"
+    form_class = SolicitarAsesoriaForm
+
+    def get_success_message(self, cleaned_data):
+        return (
+            f"Asesoría {self.object.id} "
+            f"creada satisfactoriamente: Profesional {self.object.profesional} "
+            f"- Horario {arrow.get(self.object.agendado_para).to('America/Santiago').format('YYYY-MM-DD HH:mm:ss')}"
+        )
+
+    def get_success_url(self) -> str:
+        return reverse_lazy(
+            f"{app_name}:asesoria_modificar_multa",
+            kwargs={"pk": self.object.pk},
+        )
+
+
+def modificar_multa_asesoria_view(request, pk: int):
+    asesoria: Servicio = Servicio.objects.filter(
+        tipo=TiposDeServicio.ASESORIA_FISCALIZACION
+    ).get(pk=pk)
+    multa = asesoria.evento_set.filter(tipo="MULTA").first()
+    if request.method == "POST":
+        if multa:
+            # update
+            form = ActualizarMultaAsesoriaForm(
+                request.POST, request=request, id_servicio=pk, instance=multa
+            )
+        else:
+            # crear
+            form = ActualizarMultaAsesoriaForm(
+                request.POST, request=request, id_servicio=pk, instance=None
+            )
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                "Se ha actualizado la multa correctamente",
+            )
+    else:
+        form = ActualizarMultaAsesoriaForm(
+            request.POST, request=request, id_servicio=pk, instance=multa
+        )
+    return render(
+        request,
+        f"{app_name}/asesoria/actualizar_multa.html",
+        {"form": form, "empresa": asesoria.empresa, "object": pk},
+    )
+
+
+solicitar_asesoria_view = SolicitarAsesoria.as_view()
+modificar_multa_view = modificar_multa_asesoria_view

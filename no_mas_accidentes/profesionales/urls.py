@@ -3,6 +3,7 @@ from django.urls import path
 from no_mas_accidentes.profesionales.views import (
     actualizar_actividad_de_mejora_view,
     actualizar_asesoria_emergencia_view,
+    actualizar_asesoria_view,
     actualizar_asistencia_capacitacion_view,
     actualizar_capacitacion_view,
     actualizar_checklist_view,
@@ -50,7 +51,7 @@ urlpatterns = [
     path(
         "capacitacion/<int:pk>/asistencia",
         view=actualizar_asistencia_capacitacion_view,
-        name="ccapacitacionapacitacion_actualizar_asistencia",
+        name="capacitacion_actualizar_asistencia",
     ),
     path(
         "visita/<int:pk>/actualizar",
@@ -66,5 +67,10 @@ urlpatterns = [
         "visita/<int:pk>/actividad-de-mejora",
         view=actualizar_actividad_de_mejora_view,
         name="visita_actualizar_actividad_mejora",
+    ),
+    path(
+        "asesoria/<int:pk>/actualizar",
+        view=actualizar_asesoria_view,
+        name="asesoria_actualizar",
     ),
 ]

@@ -1,10 +1,16 @@
-{% extends 'profesionales/capacitacion/base.html' %}
+{% extends 'profesionales/asesoria/base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
 
 {% block nav_item_general %}active{% endblock %}
 {% block detalle %}
-<div class="card-body col-lg-12 mt-5">
+{% if multa %}
+<div class="card-body">
+    <p class="text-body"><b>Fecha multa:</b> {{ multa.fecha }}</p>
+    <p class="text-body"><b>Descripción:</b> {{ multa.contenido }}</p>
+</div>
+{% endif %}
+<div class="card-body col-lg-12">
      <form action="" method="post">
           {% csrf_token %}
 

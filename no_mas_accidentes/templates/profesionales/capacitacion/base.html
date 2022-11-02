@@ -13,21 +13,15 @@
             <div class="card-body">
                 <ul class="nav nav-tabs d-print-none" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_item_general %}{% endblock %}"  href="{% url 'profesionales:visita_actualizar' pk=object.pk %}" role="tab">
+                        <a class="nav-link {% block nav_item_general %}{% endblock %}"  href="{% url 'profesionales:capacitacion_actualizar' pk=object.pk %}" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-address-card"></i></span>
                             <span class="d-none d-sm-block">General</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_item_checklist %}{% endblock %}" href="{% url 'profesionales:visita_actualizar_checklist' pk=object.pk %}" role="tab">
+                        <a class="nav-link {% block nav_item_asistencia %}{% endblock %}" href="{% url 'profesionales:capacitacion_actualizar_asistencia' pk=object.pk %}" role="tab">
                             <span class="d-block d-sm-none"><i class="fas fa-chalkboard-teacher"></i></span>
-                            <span class="d-none d-sm-block">Checklist</span>
-                        </a>
-                    </li>
-                  <li class="nav-item">
-                        <a class="nav-link {% block nav_item_actividades_de_mejora %}{% endblock %}" href="{% url 'profesionales:visita_actualizar_actividad_mejora' pk=object.pk %}" role="tab">
-                            <span class="d-block d-sm-none"><i class="bx bx-list-check"></i></span>
-                            <span class="d-none d-sm-block">Actividades de mejora</span>
+                            <span class="d-none d-sm-block">Asistencia</span>
                         </a>
                     </li>
                 </ul>
