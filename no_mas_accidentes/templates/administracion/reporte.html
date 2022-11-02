@@ -1,0 +1,84 @@
+{% extends 'administracion/base.html' %}
+
+{% load static %}
+{% load humanize %}
+
+{% block contents %}
+<div class="row">
+    <div class="col-lg-12">
+          <div class="card">
+              <div class="card-body">
+                  <div class="row mb-2">
+                        <div class="col-sm-12">
+                              <div class="d-sm-flex align-items-center justify-content-between">
+                                  <h4 class="mb-sm-0 font-size-18">Reporte global</h4>
+                              </div>
+                        </div><!-- end col-->
+                  </div>
+
+                  <div class="row">
+                  <div class="col-sm-6">
+                          <address>
+                              <strong>Empresa emisora:</strong><br>
+                              {{ informacion_empresa.nombre }}<br>
+                              {{ informacion_empresa.rut }}<br>
+                              {{ informacion_empresa.servicio }}<br>
+                              {{ informacion_empresa.direccion }}
+                          </address>
+                      </div>
+                  </div>
+
+                  <div class="py-2 mt-3">
+                      <h3 class="font-size-15 fw-bold">Resumen de costos</h3>
+                  </div>
+                  {% for mes, facturas_agrupadas in facturas_por_mes.items %}
+                  <div class="row card-body mt-3">
+                      <div class="py-2 mt-3">
+                          <h3 class="font-size-15 fw-bold">Mes {{ mes|date:"F Y" }}</h3>
+                      </div>
+                      <div class="table-responsive">
+                          <table class="table table-nowrap">
+                              <thead>
+                                  <tr>
+                                      <th>Empresa</th>
+                                      <th>Capacitaciones</th>
+                                      <th>Visitas</th>
+                                      <th>Asesorías</th>
+                                      <th>Llamadas</th>
+                                      <th class="text-end">$Total</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {% for factura_mensual in facturas_agrupadas.facturas %}
+                                  <tr>
+                                      <td>{{ factura_mensual.contrato__empresa__nombre }}</td>
+                                      <td>{{ factura_mensual.total_capacitaciones }}</td>
+                                      <td>{{ factura_mensual.total_visitas }}</td>
+                                      <td>{{ factura_mensual.total_asesorias }}</td>
+                                      <td>{{ factura_mensual.total_llamadas }}</td>
+                                      <td class="text-end">${{ factura_mensual.total_gastado|intcomma }}</td>
+                                  </tr>
+                                  {% endfor %}
+
+                                  <tr>
+                                      <td colspan="5" class="border-0 text-end">
+                                          <strong>Total</strong></td>
+                                      <td class="border-0 text-end"><h4 class="m-0">${{ facturas_agrupadas.total_facturado|intcomma }}</h4></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+                  {% endfor %}
+                  <div class="row mt-5">
+                  </div>
+                  <div class="d-print-none">
+                      <div class="float-end">
+                          <a href="javascript:window.print()" class="btn btn-success waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
+                      </div>
+                  </div>
+            </div>
+      </div>
+    </div>
+</div>
+{% endblock %}

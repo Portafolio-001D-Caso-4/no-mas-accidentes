@@ -18,6 +18,7 @@ from no_mas_accidentes.administracion.views import (
     lista_empresas_view,
     lista_profesionales_view,
     lista_servicios_view,
+    reporte_global_view,
 )
 
 app_name = "administracion"
@@ -103,4 +104,5 @@ urlpatterns = [
         view=enviar_recordatorio_no_pago_view,
         name="enviar_recordatorio_no_pago",
     ),
+    path("reporte-global/", view=reporte_global_view, name="reporte_global"),
 ]

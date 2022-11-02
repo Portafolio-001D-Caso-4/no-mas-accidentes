@@ -1,8 +1,12 @@
+import itertools
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
+from django.db.models.aggregates import Sum
+from django.db.models.functions import TruncMonth
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -410,3 +414,43 @@ class EnviarRecordatorioNoPagoView(EsAdministradorMixin, RedirectView):
 
 
 enviar_recordatorio_no_pago_view = EnviarRecordatorioNoPagoView.as_view()
+
+
+class ReporteGlobalView(EsAdministradorMixin, TemplateView):
+    template_name = f"{app_name}/reporte.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["informacion_empresa"] = INFORMACION_EMPRESA_PREVENCION_CHILE
+
+        facturas_mensuales = (
+            FacturaMensual.objects.annotate(month=TruncMonth("expiracion"))
+            .values("month", "contrato__empresa__nombre", "es_pagado")
+            .annotate(total_gastado=Sum("total"))
+            .annotate(
+                total_capacitaciones=Sum("num_capacitaciones")
+                + Sum("num_capacitaciones_extra")
+            )
+            .annotate(total_visitas=Sum("num_visitas") + Sum("num_visitas_extra"))
+            .annotate(total_asesorias=Sum("num_asesorias") + Sum("num_asesorias_extra"))
+            .annotate(
+                total_llamadas=Sum("num_llamadas") + Sum("num_llamadas_fuera_horario")
+            )
+            .order_by("month", "contrato__empresa__nombre")
+        )
+        facturas_agrupadas = {}
+        for key, group in itertools.groupby(
+            facturas_mensuales, key=lambda x: x["month"]
+        ):
+            facturas = list(group)
+            facturas_agrupadas[key] = {
+                "facturas": facturas,
+                "total_facturado": sum(
+                    factura["total_gastado"] for factura in facturas
+                ),
+            }
+        context["facturas_por_mes"] = facturas_agrupadas
+        return context
+
+
+reporte_global_view = ReporteGlobalView.as_view()
