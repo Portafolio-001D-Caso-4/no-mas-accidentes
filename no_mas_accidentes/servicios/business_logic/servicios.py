@@ -4,6 +4,7 @@ from typing import Any
 import arrow
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
+from django.urls import reverse
 
 from no_mas_accidentes.clientes.models import Empresa, FacturaMensual
 from no_mas_accidentes.servicios.business_logic.horarios import (
@@ -41,12 +42,24 @@ def traer_context_data_de_servicios_por_empresa(
             "end_second": (servicio.agendado_para + servicio.duracion).second,
             "all_day": False,
             "class_name": "bg-warning",
-            "url": "#",
+            "url": get_url_empresa_por_servicio(servicio=servicio),
             "profesional_asignado": servicio.profesional.usuario.name,
             "empresa": servicio.empresa.nombre,
         }
         for servicio in servicios
     ]
+
+
+def get_url_empresa_por_servicio(servicio: Servicio) -> str:
+    # if servicio.tipo == TiposDeServicio.VISITA:
+    #     return reverse("profesionales:visita_actualizar", kwargs={"pk": servicio.pk})
+    # if servicio.tipo == TiposDeServicio.CAPACITACION:
+    #     return reverse("profesionales:capacitacion_actualizar", kwargs={"pk": servicio.pk})
+    # if servicio.tipo == TiposDeServicio.ASESORIA_EMERGENCIA:
+    #     return reverse("profesionales:asesoria_emergencia_actualizar", kwargs={"pk": servicio.pk})
+    # if servicio.tipo == TiposDeServicio.ASESORIA_FISCALIZACION:
+    #     return reverse("profesionales:asesoria_actualizar", kwargs={"pk": servicio.pk})
+    return "#"
 
 
 def traer_servicios_por_profesional(id_profesional: int) -> QuerySet[Servicio]:
@@ -73,12 +86,28 @@ def traer_context_data_de_servicios_por_profesional(
             "end_second": (servicio.agendado_para + servicio.duracion).second,
             "all_day": False,
             "class_name": "bg-warning",
-            "url": "#",
+            "url": get_url_profesional_por_servicio(servicio=servicio),
             "profesional_asignado": servicio.profesional.usuario.name,
             "empresa": servicio.empresa.nombre,
         }
         for servicio in servicios
     ]
+
+
+def get_url_profesional_por_servicio(servicio: Servicio) -> str:
+    if servicio.tipo == TiposDeServicio.VISITA:
+        return reverse("profesionales:visita_actualizar", kwargs={"pk": servicio.pk})
+    if servicio.tipo == TiposDeServicio.CAPACITACION:
+        return reverse(
+            "profesionales:capacitacion_actualizar", kwargs={"pk": servicio.pk}
+        )
+    if servicio.tipo == TiposDeServicio.ASESORIA_EMERGENCIA:
+        return reverse(
+            "profesionales:asesoria_emergencia_actualizar", kwargs={"pk": servicio.pk}
+        )
+    if servicio.tipo == TiposDeServicio.ASESORIA_FISCALIZACION:
+        return reverse("profesionales:asesoria_actualizar", kwargs={"pk": servicio.pk})
+    return "#"
 
 
 def crear_asesoria_de_emergencia_para_empresa(
