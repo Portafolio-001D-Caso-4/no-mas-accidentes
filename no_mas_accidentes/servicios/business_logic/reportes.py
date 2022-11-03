@@ -26,7 +26,7 @@ def traer_informacion_reporte_cliente(empresa_id: int):
     else:
         hasta = arrow.utcnow().datetime
     return (
-        Servicio.objects.filter(realizado_en__lte=hasta)
+        Servicio.objects.filter(realizado_en__lte=hasta, empresa_id=empresa_id)
         .prefetch_related("oportunidaddemejora_set", "evento_set")
         .select_related("checklist")
         .order_by("realizado_en", "tipo"),

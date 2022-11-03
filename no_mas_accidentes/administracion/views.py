@@ -43,6 +43,9 @@ from no_mas_accidentes.administracion.mixins import (
 from no_mas_accidentes.administracion.tasks import enviar_recordatorio_no_pago
 from no_mas_accidentes.clientes.models import Contrato, Empresa, FacturaMensual
 from no_mas_accidentes.profesionales.models import Profesional
+from no_mas_accidentes.servicios.business_logic.reportes import (
+    actualizar_reporte_cliente,
+)
 from no_mas_accidentes.servicios.constants import TIPOS_DE_SERVICIOS
 from no_mas_accidentes.servicios.models import Servicio
 from no_mas_accidentes.users.models import User
@@ -454,3 +457,30 @@ class ReporteGlobalView(EsAdministradorMixin, TemplateView):
 
 
 reporte_global_view = ReporteGlobalView.as_view()
+
+
+class ActualizarReporteClienteView(EsAdministradorMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        self.url = reverse(
+            "administracion:mantenedor_empresas_lista",
+        )
+        empresa_id = self.kwargs["pk"]
+        actualizar_reporte_cliente(empresa_id=empresa_id)
+        factura_mensual: FacturaMensual = (
+            FacturaMensual.objects.filter(contrato__empresa_id=empresa_id)
+            .order_by("expiracion")
+            .last()
+        )
+        factura_mensual.agregar_nueva_modificacion_reporte(
+            generado_por=self.request.user.id
+        )
+        messages.success(
+            self.request,
+            f"Reporte de cliente {empresa_id} actualizado satisfactoriamente",
+        )
+        return super().get_redirect_url(*args, **kwargs)
+
+
+actualizar_reporte_cliente_view = ActualizarReporteClienteView.as_view()

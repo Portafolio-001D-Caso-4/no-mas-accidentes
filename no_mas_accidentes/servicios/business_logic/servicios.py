@@ -31,15 +31,36 @@ def traer_context_data_de_servicios_por_empresa(
     return [
         {
             "title": servicio.tipo,
-            "month": servicio.agendado_para.month,
-            "day": servicio.agendado_para.day,
-            "year": servicio.agendado_para.year,
-            "start_hour": servicio.agendado_para.hour,
-            "start_min": servicio.agendado_para.minute,
-            "start_second": servicio.agendado_para.second,
-            "end_hour": (servicio.agendado_para + servicio.duracion).hour,
-            "end_min": (servicio.agendado_para + servicio.duracion).minute,
-            "end_second": (servicio.agendado_para + servicio.duracion).second,
+            "month": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.month,
+            "day": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.day,
+            "year": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.year,
+            "start_hour": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.hour,
+            "start_min": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.minute,
+            "start_second": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.second,
+            "end_hour": (
+                arrow.get(servicio.agendado_para).to("America/Santiago").datetime
+                + servicio.duracion
+            ).hour,
+            "end_min": (
+                arrow.get(servicio.agendado_para).to("America/Santiago").datetime
+                + servicio.duracion
+            ).minute,
+            "end_second": (
+                arrow.get(servicio.agendado_para).to("America/Santiago").datetime
+                + servicio.duracion
+            ).second,
             "all_day": False,
             "class_name": "bg-warning",
             "url": get_url_empresa_por_servicio(servicio=servicio),
@@ -76,14 +97,33 @@ def traer_context_data_de_servicios_por_profesional(
         {
             "title": servicio.tipo,
             "month": servicio.agendado_para.month,
-            "day": servicio.agendado_para.day,
-            "year": servicio.agendado_para.year,
-            "start_hour": servicio.agendado_para.hour,
-            "start_min": servicio.agendado_para.minute,
-            "start_second": servicio.agendado_para.second,
-            "end_hour": (servicio.agendado_para + servicio.duracion).hour,
-            "end_min": (servicio.agendado_para + servicio.duracion).minute,
-            "end_second": (servicio.agendado_para + servicio.duracion).second,
+            "day": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.day,
+            "year": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.year,
+            "start_hour": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.hour,
+            "start_min": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.minute,
+            "start_second": arrow.get(servicio.agendado_para)
+            .to("America/Santiago")
+            .datetime.second,
+            "end_hour": (
+                arrow.get(servicio.agendado_para).to("America/Santiago").datetime
+                + servicio.duracion
+            ).hour,
+            "end_min": (
+                arrow.get(servicio.agendado_para).to("America/Santiago").datetime
+                + servicio.duracion
+            ).minute,
+            "end_second": (
+                arrow.get(servicio.agendado_para).to("America/Santiago").datetime
+                + servicio.duracion
+            ).second,
             "all_day": False,
             "class_name": "bg-warning",
             "url": get_url_profesional_por_servicio(servicio=servicio),
@@ -140,7 +180,11 @@ def crear_asesoria_de_emergencia_para_empresa(
     accidente.servicio = servicio
     accidente.save()
 
-    factura_mensual = FacturaMensual.objects.filter(contrato__empresa=empresa).last()
+    factura_mensual = (
+        FacturaMensual.objects.filter(contrato__empresa=empresa)
+        .order_by("expiracion")
+        .last()
+    )
     factura_mensual.agregar_nueva_asesoria(
         asesoria=servicio, generado_por=solicitante.id
     )

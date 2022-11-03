@@ -1,6 +1,7 @@
 from django.urls import path
 
 from no_mas_accidentes.administracion.views import (
+    actualizar_reporte_cliente_view,
     crear_cliente_view,
     crear_empresa_view,
     crear_profesional_view,
@@ -105,4 +106,9 @@ urlpatterns = [
         name="enviar_recordatorio_no_pago",
     ),
     path("reporte-global/", view=reporte_global_view, name="reporte_global"),
+    path(
+        "mantenedor-empresas/<int:pk>/modificar-reporte/",
+        view=actualizar_reporte_cliente_view,
+        name="actualizar_reporte_cliente",
+    ),
 ]

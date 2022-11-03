@@ -1,5 +1,3 @@
-import datetime
-
 import arrow
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -46,12 +44,22 @@ class Home(EsClienteYAdeudadoMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         id_empresa = self.request.user.empresa_id
-        factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
-            contrato__empresa_id=id_empresa
-        ).last()
-        context["num_visitas"] = factura_mensual.num_visitas
-        context["num_capacitaciones"] = factura_mensual.num_capacitaciones
-        context["num_asesorias"] = factura_mensual.num_asesorias
+        factura_mensual: FacturaMensual = (
+            FacturaMensual.objects.filter(contrato__empresa_id=id_empresa)
+            .order_by("expiracion")
+            .last()
+        )
+        print(factura_mensual)
+        context["num_visitas"] = (
+            factura_mensual.num_visitas + factura_mensual.num_visitas_extra
+        )
+        context["num_capacitaciones"] = (
+            factura_mensual.num_capacitaciones
+            + factura_mensual.num_capacitaciones_extra
+        )
+        context["num_asesorias"] = (
+            factura_mensual.num_asesorias + factura_mensual.num_asesorias_extra
+        )
         context["num_llamadas"] = factura_mensual.num_llamadas
 
         context["max_num_visitas"] = factura_mensual.contrato.max_visitas_mensuales
@@ -62,11 +70,13 @@ class Home(EsClienteYAdeudadoMixin, TemplateView):
 
         context["num_llamadas_extra"] = factura_mensual.num_llamadas_fuera_horario
         num_accidentes = Evento.objects.filter(
-            fecha__gte=factura_mensual.expiracion - datetime.timedelta(days=30),
+            fecha__gte=arrow.get(factura_mensual.expiracion).replace(day=1).datetime,
+            fecha__lte=factura_mensual.expiracion,
             tipo="ACCIDENTE",
         ).count()
         num_multas = Evento.objects.filter(
-            fecha__gte=factura_mensual.expiracion - datetime.timedelta(days=30),
+            fecha__gte=arrow.get(factura_mensual.expiracion).replace(day=1).datetime,
+            fecha__lte=factura_mensual.expiracion,
             tipo="MULTA",
         ).count()
 
@@ -90,9 +100,13 @@ class RealizarPagoView(EsClienteMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["informacion_empresa"] = INFORMACION_EMPRESA_PREVENCION_CHILE
         context["empresa"] = self.request.user.empresa
-        factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
-            contrato__empresa=context["empresa"], es_pagado=False
-        ).last()
+        factura_mensual: FacturaMensual = (
+            FacturaMensual.objects.filter(
+                contrato__empresa=context["empresa"], es_pagado=False
+            )
+            .order_by("expiracion")
+            .last()
+        )
         context["factura_mensual"] = factura_mensual
         context["pago_realizado"] = False
 
@@ -151,9 +165,11 @@ class TransaccionExitosaView(EsClienteMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["informacion_empresa"] = INFORMACION_EMPRESA_PREVENCION_CHILE
         context["empresa"] = self.request.user.empresa
-        factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
-            contrato__empresa=context["empresa"]
-        ).last()
+        factura_mensual: FacturaMensual = (
+            FacturaMensual.objects.filter(contrato__empresa=context["empresa"])
+            .order_by("expiracion")
+            .last()
+        )
         context["factura_mensual"] = factura_mensual
         context["pago_realizado"] = True
 

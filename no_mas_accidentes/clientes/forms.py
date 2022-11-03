@@ -41,6 +41,8 @@ class SolicitarAsesoriaDeEmergenciaForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
+        self.fields["fecha"].help_text = "Fecha correspondiente al accidente"
+        self.fields["contenido"].help_text = "Explique lo sucedido en el accidente"
 
     def save(self, commit: bool = True):
         self.instance.tipo = "ACCIDENTE"
@@ -63,6 +65,14 @@ class SolicitarCapacitacionForm(ModelForm):
             "motivo",
             "num_participantes",
         )
+
+    def clean_num_participantes(self):
+        if (
+            not self.cleaned_data["num_participantes"]
+            or self.cleaned_data["num_participantes"] <= 0
+        ):
+            raise ValidationError("El número de participantes debe ser mayor a 0")
+        return self.cleaned_data["num_participantes"]
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
@@ -100,9 +110,11 @@ class SolicitarCapacitacionForm(ModelForm):
                 hours=duracion_en_hrs_por_servicio[TiposDeServicio.CAPACITACION]
             )
             capacitacion.save()
-            factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
-                contrato__empresa=empresa
-            ).last()
+            factura_mensual: FacturaMensual = (
+                FacturaMensual.objects.filter(contrato__empresa=empresa)
+                .order_by("expiracion")
+                .last()
+            )
             factura_mensual.agregar_nueva_capacitacion(
                 capacitacion=capacitacion, generado_por=self.request.user.id
             )
@@ -170,9 +182,11 @@ class SolicitarVisitaForm(ModelForm):
                 empresa_id=id_empresa
             ).last()
             Checklist.objects.create(items=checklist_base.items, servicio=visita)
-            factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
-                contrato__empresa=empresa
-            ).last()
+            factura_mensual: FacturaMensual = (
+                FacturaMensual.objects.filter(contrato__empresa=empresa)
+                .order_by("expiracion")
+                .last()
+            )
             factura_mensual.agregar_nueva_visita(
                 visita=visita, generado_por=self.request.user.id
             )
@@ -222,9 +236,11 @@ class SolicitarAsesoriaForm(ModelForm):
                 ]
             )
             asesoria.save()
-            factura_mensual: FacturaMensual = FacturaMensual.objects.filter(
-                contrato__empresa=empresa
-            ).last()
+            factura_mensual: FacturaMensual = (
+                FacturaMensual.objects.filter(contrato__empresa=empresa)
+                .order_by("expiracion")
+                .last()
+            )
             factura_mensual.agregar_nueva_asesoria(
                 asesoria=asesoria, generado_por=self.request.user.id
             )
