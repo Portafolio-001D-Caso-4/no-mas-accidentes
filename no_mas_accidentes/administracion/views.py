@@ -1,8 +1,12 @@
+import itertools
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
+from django.db.models.aggregates import Sum
+from django.db.models.functions import TruncMonth
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -39,6 +43,9 @@ from no_mas_accidentes.administracion.mixins import (
 from no_mas_accidentes.administracion.tasks import enviar_recordatorio_no_pago
 from no_mas_accidentes.clientes.models import Contrato, Empresa, FacturaMensual
 from no_mas_accidentes.profesionales.models import Profesional
+from no_mas_accidentes.servicios.business_logic.reportes import (
+    actualizar_reporte_cliente,
+)
 from no_mas_accidentes.servicios.constants import TIPOS_DE_SERVICIOS
 from no_mas_accidentes.servicios.models import Servicio
 from no_mas_accidentes.users.models import User
@@ -410,3 +417,70 @@ class EnviarRecordatorioNoPagoView(EsAdministradorMixin, RedirectView):
 
 
 enviar_recordatorio_no_pago_view = EnviarRecordatorioNoPagoView.as_view()
+
+
+class ReporteGlobalView(EsAdministradorMixin, TemplateView):
+    template_name = f"{app_name}/reporte.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["informacion_empresa"] = INFORMACION_EMPRESA_PREVENCION_CHILE
+
+        facturas_mensuales = (
+            FacturaMensual.objects.annotate(month=TruncMonth("expiracion"))
+            .values("month", "contrato__empresa__nombre", "es_pagado")
+            .annotate(total_gastado=Sum("total"))
+            .annotate(
+                total_capacitaciones=Sum("num_capacitaciones")
+                + Sum("num_capacitaciones_extra")
+            )
+            .annotate(total_visitas=Sum("num_visitas") + Sum("num_visitas_extra"))
+            .annotate(total_asesorias=Sum("num_asesorias") + Sum("num_asesorias_extra"))
+            .annotate(
+                total_llamadas=Sum("num_llamadas") + Sum("num_llamadas_fuera_horario")
+            )
+            .order_by("month", "contrato__empresa__nombre")
+        )
+        facturas_agrupadas = {}
+        for key, group in itertools.groupby(
+            facturas_mensuales, key=lambda x: x["month"]
+        ):
+            facturas = list(group)
+            facturas_agrupadas[key] = {
+                "facturas": facturas,
+                "total_facturado": sum(
+                    factura["total_gastado"] for factura in facturas
+                ),
+            }
+        context["facturas_por_mes"] = facturas_agrupadas
+        return context
+
+
+reporte_global_view = ReporteGlobalView.as_view()
+
+
+class ActualizarReporteClienteView(EsAdministradorMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        self.url = reverse(
+            "administracion:mantenedor_empresas_lista",
+        )
+        empresa_id = self.kwargs["pk"]
+        actualizar_reporte_cliente(empresa_id=empresa_id)
+        factura_mensual: FacturaMensual = (
+            FacturaMensual.objects.filter(contrato__empresa_id=empresa_id)
+            .order_by("expiracion")
+            .last()
+        )
+        factura_mensual.agregar_nueva_modificacion_reporte(
+            generado_por=self.request.user.id
+        )
+        messages.success(
+            self.request,
+            f"Reporte de cliente {empresa_id} actualizado satisfactoriamente",
+        )
+        return super().get_redirect_url(*args, **kwargs)
+
+
+actualizar_reporte_cliente_view = ActualizarReporteClienteView.as_view()

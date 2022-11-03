@@ -29,6 +29,14 @@
 	```bash
 	docker-compose -f local.yml build
 	```
+- Corremos las migraciones
+	```bash
+	docker-compose -f local.yml run --rm django python manage.py migrate
+	```
+- Cargamos la data de prueba
+	```bash
+	docker-compose -f local.yml run --rm django python manage.py cargar_data_prueba
+	```
 - Iniciar el programa utilizando `docker-compose`
 	```bash
 	docker-compose -f local.yml up
@@ -61,7 +69,7 @@ Vienen incluidos los siguientes usuarios para su uso, donde sus credenciales son
   - password: 204186642
 - Profesional:
   - correo electrónico: lu.portilla@duocuc.cl
-  - password: 254186642
+  - password: 250474474
 
 ## Testing
 Para correr los tests, debes utilizar

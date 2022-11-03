@@ -187,19 +187,20 @@ class FacturaMensual(models.Model):
     def agregar_nueva_capacitacion(self, capacitacion, generado_por: int):
         max_capacitaciones_mensuales = self.contrato.max_capacitaciones_mensuales
         if self.num_capacitaciones < max_capacitaciones_mensuales:
-            original = self.num_capacitaciones
+            self.num_capacitaciones += 1
+
             self.enviar_alerta_nuevo_cobro(
-                mensaje=f"Capacitación ({original+1} de {max_capacitaciones_mensuales} gratis)",
+                mensaje=f"Capacitación ({self.num_capacitaciones} de {max_capacitaciones_mensuales} gratis)",
                 generado_por=generado_por,
             )
+
         else:
-            original = self.num_capacitaciones_extra
+            self.num_capacitaciones_extra += 1
             self.enviar_alerta_nuevo_cobro(
-                mensaje=f"Capacitación extra (${self.valor_capacitaciones_extra})",
+                mensaje=f"Capacitación extra (${self.contrato.valor_capacitacion_extra})",
                 generado_por=generado_por,
             )
-        original += 1
-        self.total += self.valor_capacitaciones_extra
+            self.total += self.contrato.valor_capacitacion_extra
         self.save()
 
     def agregar_nueva_visita(self, visita, generado_por: int):
@@ -213,10 +214,10 @@ class FacturaMensual(models.Model):
         else:
             self.num_visitas_extra += 1
             self.enviar_alerta_nuevo_cobro(
-                mensaje=f"Visita extra (${self.valor_visitas_extra})",
+                mensaje=f"Visita extra (${self.contrato.valor_visita_extra})",
                 generado_por=generado_por,
             )
-        self.total += self.valor_visitas_extra
+            self.total += self.contrato.valor_visita_extra
         self.save()
 
     def agregar_nueva_asesoria(self, asesoria, generado_por: int):
@@ -230,10 +231,10 @@ class FacturaMensual(models.Model):
         else:
             self.num_asesorias_extra += 1
             self.enviar_alerta_nuevo_cobro(
-                mensaje=f"Asesoría extra (${self.valor_asesorias_extra})",
+                mensaje=f"Asesoría extra (${self.contrato.valor_asesoria_extra})",
                 generado_por=generado_por,
             )
-        self.total += self.valor_asesorias_extra
+            self.total += self.contrato.valor_asesoria_extra
         self.save()
 
     def agregar_nueva_llamada(self, llamada, generado_por: int):
@@ -247,8 +248,22 @@ class FacturaMensual(models.Model):
         )
 
     def agregar_nueva_modificacion_reporte(self, generado_por: int):
-        # TODO: hacer logica por año
-
-        self.enviar_alerta_nuevo_cobro(
-            mensaje="Modificación reporte", generado_por=generado_por
+        max_actualizaciones_mensuales = (
+            self.contrato.max_actualizaciones_mensuales_reporte_cliente
         )
+        if self.num_modificaciones_reporte < max_actualizaciones_mensuales:
+            self.num_modificaciones_reporte += 1
+            self.enviar_alerta_nuevo_cobro(
+                mensaje=f"Modificación reporte "
+                f"({self.num_modificaciones_reporte} "
+                f"de {max_actualizaciones_mensuales} gratis)",
+                generado_por=generado_por,
+            )
+        else:
+            self.num_modificaciones_reporte_extra += 1
+            self.enviar_alerta_nuevo_cobro(
+                mensaje=f"Modificación reporte (${self.contrato.valor_modificacion_reporte_extra})",
+                generado_por=generado_por,
+            )
+            self.total += self.contrato.valor_modificacion_reporte_extra
+        self.save()
