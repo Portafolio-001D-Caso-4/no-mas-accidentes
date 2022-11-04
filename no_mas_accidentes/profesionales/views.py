@@ -392,8 +392,10 @@ def actualizar_checklist_view(request, pk: int):
         f"item_{index}": item for index, item in enumerate(checklist.items, start=1)
     }
     data_inicial = {"numero_de_items": len(checklist.items), **item_por_id}
-
+    print("item_por_id", item_por_id)
+    print("data_inicial", data_inicial)
     if request.method == "POST":
+        print(request.POST.get("numero_de_items"), " num items")
         form = ActualizarChecklistForm(
             request.POST,
             request=request,
@@ -406,7 +408,10 @@ def actualizar_checklist_view(request, pk: int):
             form.save()
     else:
         form = ActualizarChecklistForm(
-            request=request, id_servicio=pk, initial=data_inicial
+            request=request,
+            id_servicio=pk,
+            numero_de_items=len(checklist.items),
+            initial=data_inicial,
         )
         # ver esta template
     return render(
