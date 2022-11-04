@@ -174,6 +174,7 @@ class ActualizarChecklistForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         numero_de_items = kwargs.pop("numero_de_items", 3)
+        print("numero de items", numero_de_items)
         self.id_servicio = kwargs.pop("id_servicio")
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
@@ -182,7 +183,7 @@ class ActualizarChecklistForm(forms.Form):
             self.fields[f"item_{index+1}"] = forms.CharField(
                 min_length=10, max_length=256
             )
-            self.fields[f"item_{index + 1}_respuesta"] = forms.BooleanField(
+            self.fields[f"item_{index+1}_respuesta"] = forms.BooleanField(
                 required=False
             )
 
