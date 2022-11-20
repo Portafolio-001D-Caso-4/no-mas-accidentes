@@ -11,8 +11,10 @@ from no_mas_accidentes.profesionales.views import (
     crear_o_actualizar_checklist_base_view,
     detalle_empresa_informacion_view,
     home_view,
+    lista_actividades_mejora_view,
     lista_empresas_asignadas_view,
     lista_servicios_asignados_view,
+    revisar_actividad_de_mejora_view,
 )
 
 app_name = "profesionales"
@@ -32,6 +34,11 @@ urlpatterns = [
         "empresas-asignadas/<int:pk>/checklist_base/",
         view=crear_o_actualizar_checklist_base_view,
         name="empresas_asignadas_crear_o_actualizar_checklist_base",
+    ),
+    path(
+        "empresas-asignadas/<int:pk>/actividades-mejora/",
+        view=lista_actividades_mejora_view,
+        name="empresas_asignadas_actividades_de_mejora",
     ),
     path(
         "servicios/lista",
@@ -72,5 +79,10 @@ urlpatterns = [
         "asesoria/<int:pk>/actualizar",
         view=actualizar_asesoria_view,
         name="asesoria_actualizar",
+    ),
+    path(
+        "actividad-de-mejora/<int:pk>/revisar/<str:realizado>",
+        view=revisar_actividad_de_mejora_view,
+        name="revisar_actividad_mejora",
     ),
 ]
