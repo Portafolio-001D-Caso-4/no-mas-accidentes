@@ -31,21 +31,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            {% for servicio in page_obj %}
+                            {% for actividad in page_obj %}
                                 <tr>
-                                    <td>{{ servicio.id }}</td>
-                                    <td>{{ servicio.creado_en|date:"SHORT_DATETIME_FORMAT" }}</td>
-                                    <td>{{ servicio.contenido }}</td>
-                                    <td>{% if servicio.realizado %} SI {% elif servicio.realizado is None %} Sin revisar {% else %} NO {% endif %}</td>
-                                    <td>{% if servicio.revisado_por %} {{ servicio.revisado_por }} {% endif %}</td>
-                                    <td>{{ servicio.revisado_en|date:"SHORT_DATETIME_FORMAT" }}</td>
+                                    <td>{{ actividad.id }}</td>
+                                    <td>{{ actividad.creado_en|date:"SHORT_DATETIME_FORMAT" }}</td>
+                                    <td>{{ actividad.contenido }}</td>
+                                    <td>{% if actividad.realizado %} SI {% elif actividad.realizado is None %} Sin revisar {% else %} NO {% endif %}</td>
+                                    <td>{% if actividad.revisado_por %} {{ actividad.revisado_por }} {% endif %}</td>
+                                    <td>{{ actividad.revisado_en|date:"SHORT_DATETIME_FORMAT" }}</td>
                                     <td>
                                        <ul class="list-inline font-size-20 contact-links mb-0">
                                             <li class="list-inline-item px-2">
-                                                <a href="#" title="Cumple"><i class="bx bx bxs-badge-check "></i></a>
+                                                <a href="{% url 'profesionales:revisar_actividad_mejora' pk=actividad.id realizado='SI' %}" title="Cumple"><i class="bx bx bxs-badge-check "></i></a>
                                             </li>
                                             <li class="list-inline-item px-2">
-                                                <a href="#" title="No Cumple"><i class="bx bx bxs-error"></i></a>
+                                                <a href="{% url 'profesionales:revisar_actividad_mejora' pk=actividad.id realizado='NO' %}" title="No Cumple"><i class="bx bx bxs-error"></i></a>
                                             </li>
                                         </ul>
                                     </td>

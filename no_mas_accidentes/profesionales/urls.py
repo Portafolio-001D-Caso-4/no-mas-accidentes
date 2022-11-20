@@ -14,6 +14,7 @@ from no_mas_accidentes.profesionales.views import (
     lista_actividades_mejora_view,
     lista_empresas_asignadas_view,
     lista_servicios_asignados_view,
+    revisar_actividad_de_mejora_view,
 )
 
 app_name = "profesionales"
@@ -78,5 +79,10 @@ urlpatterns = [
         "asesoria/<int:pk>/actualizar",
         view=actualizar_asesoria_view,
         name="asesoria_actualizar",
+    ),
+    path(
+        "actividad-de-mejora/<int:pk>/revisar/<str:realizado>",
+        view=revisar_actividad_de_mejora_view,
+        name="revisar_actividad_mejora",
     ),
 ]
