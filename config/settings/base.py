@@ -77,6 +77,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "user_messages",
+    "pwa",
 ]
 
 LOCAL_APPS = [
@@ -340,3 +341,15 @@ CELERY_BEAT_SCHEDULE = {
 
 SLACK_TOKEN = env("SLACK_TOKEN", default="")
 REDIS_URL = env("REDIS_URL")
+
+PWA_SERVICE_WORKER_PATH = APPS_DIR / "static/js" / "serviceworker.js"
+print(PWA_SERVICE_WORKER_PATH)
+PWA_APP_NAME = "No más accidentes app"
+PWA_APP_DESCRIPTION = "Aplicación No más accidentes"
+PWA_APP_THEME_COLOR = "#87EFC3"
+PWA_APP_BACKGROUND_COLOR = "#fff"
+PWA_APP_ICONS = [
+    {"src": "/static/images/LOGO_NMA.png", "sizes": "128x128"},
+    {"src": "/static/images/LOGO_NMA.png", "sizes": "256x256"},
+    {"src": "/static/images/LOGO_NMA.png", "sizes": "512x512"},
+]
