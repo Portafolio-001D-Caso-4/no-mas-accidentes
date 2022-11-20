@@ -16,6 +16,7 @@ urlpatterns = [
     path("users/", include("no_mas_accidentes.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path("", include("pwa.urls")),
     path(
         "administracion/",
         include("no_mas_accidentes.administracion.urls", namespace="administracion"),
