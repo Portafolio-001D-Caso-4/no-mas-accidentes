@@ -509,3 +509,25 @@ class ActualizarAsesoriaFiscalizacionView(EsProfesionalMixin, UpdateView):
 
 
 actualizar_asesoria_view = ActualizarAsesoriaFiscalizacionView.as_view()
+
+
+class ListaActividadesDeMejoraView(EsProfesionalMixin, ListView):
+    queryset = OportunidadDeMejora.objects.all()
+    fields = "__all__"
+    success_url = reverse_lazy(f"{app_name}:empresas_asignadas_actividades_de_mejora")
+    ordering = "-creado_en"
+    paginate_by = 10
+    template_name = f"{app_name}/detalle_empresa/actividades_de_mejora.html"
+
+    def get_queryset(self):
+        queryset = self.queryset.filter(servicio__empresa_id=self.kwargs["pk"])
+        queryset = queryset.filter(servicio__profesional_id=self.request.user.pk)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["empresa"] = Empresa.objects.get(id=self.kwargs["pk"])
+        return context
+
+
+lista_actividades_mejora_view = ListaActividadesDeMejoraView.as_view()

@@ -1,0 +1,81 @@
+{% extends 'profesionales/detalle_empresa/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block nav_item_actividades_mejora %}active{% endblock %}
+{% block detalle_empresa_body %}
+<div class="card-body col-lg-12 mt-5">
+    <div class="row">
+        <div class="col-lg-12">
+          <div class="row mb-2">
+                <div class="col-sm-12">
+                      <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                          <h4 class="mb-sm-0 font-size-18">Actividades de mejora</h4>
+                      </div>
+                </div><!-- end col-->
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle table-nowrap table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" style="width: 70px;">#</th>
+                                    <th scope="col">FECHA</th>
+                                    <th scope="col">ACTIVIDAD</th>
+                                    <th scope="col">¿CUMPLE?</th>
+                                    <th scope="col">REVISADO POR</th>
+                                    <th scope="col">REVISADO EN</th>
+                                    <th scope="col">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for servicio in page_obj %}
+                                <tr>
+                                    <td>{{ servicio.id }}</td>
+                                    <td>{{ servicio.creado_en|date:"SHORT_DATETIME_FORMAT" }}</td>
+                                    <td>{{ servicio.contenido }}</td>
+                                    <td>{% if servicio.realizado %} SI {% elif servicio.realizado is None %} Sin revisar {% else %} NO {% endif %}</td>
+                                    <td>{% if servicio.revisado_por %} {{ servicio.revisado_por }} {% endif %}</td>
+                                    <td>{{ servicio.revisado_en|date:"SHORT_DATETIME_FORMAT" }}</td>
+                                    <td>
+                                       <ul class="list-inline font-size-20 contact-links mb-0">
+                                            <li class="list-inline-item px-2">
+                                                <a href="#" title="Cumple"><i class="bx bx bxs-badge-check "></i></a>
+                                            </li>
+                                            <li class="list-inline-item px-2">
+                                                <a href="#" title="No Cumple"><i class="bx bx bxs-error"></i></a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="pagination justify-content-center mt-4">
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a href="?page={{ page_obj.previous_page_number }}" class="page-link"><i class="mdi mdi-chevron-left"></i></a>
+                                </li>
+                                {% endif %}
+                                <li class="page-item">
+                                    <a class="page-link">{{ page_obj.number }} de {{page_obj.paginator.num_pages }}</a>
+                                </li>
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a href="?page={{ page_obj.next_page_number }}" class="page-link"><i class="mdi mdi-chevron-right"></i></a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

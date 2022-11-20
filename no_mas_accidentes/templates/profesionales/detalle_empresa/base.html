@@ -30,6 +30,12 @@
                             <span class="d-none d-sm-block">Checklist base</span>
                         </a>
                     </li>
+                  <li class="nav-item">
+                        <a class="nav-link {% block nav_item_actividades_mejora %}{% endblock %}" href="{% url 'profesionales:empresas_asignadas_actividades_de_mejora' pk=empresa.pk %}" role="tab">
+                            <span class="d-block d-sm-none"><i class="bx bx-list-check"></i></span>
+                            <span class="d-none d-sm-block">Actividades de mejora</span>
+                        </a>
+                    </li>
                 </ul>
                 {% block detalle_empresa_body %}
                 {% endblock %}
